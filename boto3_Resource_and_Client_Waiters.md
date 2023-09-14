@@ -16,7 +16,5 @@ Here's a cool trick: use both! Kick off the instance with a resource waiter for 
 
 ![1692898743083](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/d67d125f-23f9-4871-aca0-ed13f1b8d849)
 ![1692898743602](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/bdb4105c-1d14-49ad-af05-8f98c04c45ba)
-![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/14b8eb24-a315-424d-bc20-378c0155ef15)
-![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/71d10fd4-b551-4055-a713-4000c1c91c4a)
-![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/34ab726b-279f-4940-b7d2-44d4e7f1be5b)
+
 
