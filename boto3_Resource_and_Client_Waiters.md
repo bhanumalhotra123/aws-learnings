@@ -14,4 +14,8 @@ Client waiters, however, wait longer between checks – around every 15 seconds 
 🤝 Smart Combo: Resource + Client
 Here's a cool trick: use both! Kick off the instance with a resource waiter for the "running" signal. Then let the client waiter take over to ensure all those startup extras are done. It's a power duo for precise yet patient automation.
 
+(https://github.com/bhanumalhotra123/jenkins_monitor_prometheus_grafana_influxdb/assets/144083659/9b48040a-d23a-40e0-ac6e-b91b9d7696e3)
+
+(https://github.com/bhanumalhotra123/jenkins_monitor_prometheus_grafana_influxdb/assets/144083659/9ba17d68-c077-4615-a920-4803997446d1)
+
 
