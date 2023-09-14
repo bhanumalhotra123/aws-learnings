@@ -47,3 +47,16 @@ Define Alarm Details: Give your alarm a name and a notification message that del
 Confirm Subscription: Check your email, confirm the subscription, and get ready for notifications.
 
 Test the Alarm: Run your app/script again and enjoy the triumphant ding of your email notification!
+
+
+
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/9ba737a0-ea53-47c2-ad1f-40cba0f3844b)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/78f70289-e23a-49d9-bc48-56feb20c1973)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/6207d4b6-48cf-442e-942d-715beff2183c)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/dd464574-dafb-45d5-b64f-59f92729336c)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/1c80245e-03c9-43e4-a102-e47636125f88)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/78624beb-289a-46da-b10b-085250ad8f65)
+![image](https://github.com/bhanumalhotra123/aws-learnings/assets/144083659/f4f2e9c2-3608-4231-bd59-e8c4e4d0cda8)
+
+
+
