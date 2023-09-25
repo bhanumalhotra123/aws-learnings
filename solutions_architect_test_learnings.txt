@@ -1,0 +1,44 @@
+Kinesis Data Analytics
+Kinesis Data Firehose
+Kinesis Data Streams
+Amazon EMR 
+
+Autoscaling
+Target Tracking Scaling Policy
+Step Scaling Policy
+Simple Scaling Policy
+Scheduled Scaling
+
+DynamoDB Accelerator (DAX)
+ElastiCache(It is designed for caching data from various data sources, including databases and web services, not just DynamoDB.)
+
+Amazon EC2 Spot instances is cheaper than lambda
+
+here are no S3 data transfer charges when data is transferred in from the internet. Since S3TA did not result in an accelerated transfer, there are no S3TA transfer charges to be paid.
+
+Amazon RDS can automatically back up your database and keep your database software up to date with the latest version. However, RDS does not allow you to access the host OS of the database.
+
+RDS Custom for Oracle as it allows you to access and customize your database server host and operating system.
+
+To delete a CMK in AWS KMS you schedule key deletion. You can set the waiting period from a minimum of 7 days up to a maximum of 30 days. 
+
+GuardDuty analyzes continuous streams of meta-data generated from your account and network activity found in AWS CloudTrail Events, Amazon VPC Flow Logs, and DNS Logs.
+
+Amazon Inspector security assessments help you check for unintended network accessibility of your Amazon EC2 instances and for vulnerabilities on those EC2 instances
+
+ While TCP is more reliable, it transfers data more slowly. UDP is less reliable but works more quickly.
+
+AWS Global Accelerator
+Amazon CloudFront 
+AWS Elastic Load Balancing (ELB)
+Amazon Route 53 
+
+Global Reach	Yes	Yes	No	Yes
+
+
+Multi-AZ follows synchronous replication and spans at least two Availability Zones within a single region. 
+Read replicas follow asynchronous replication and can be within an Availability Zone, Cross-AZ, or Cross-Region
+
+
+
+
