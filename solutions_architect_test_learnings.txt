@@ -1,44 +1,41 @@
-Kinesis Data Analytics
-Kinesis Data Firehose
-Kinesis Data Streams
-Amazon EMR 
+Test5  
+1.Amazon Transcribe is an automatic speech recognition (ASR) service that makes it easy to convert audio to text. One key feature of the service is called speaker identification.  
 
-Autoscaling
-Target Tracking Scaling Policy
-Step Scaling Policy
-Simple Scaling Policy
-Scheduled Scaling
+Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless.  
 
-DynamoDB Accelerator (DAX)
-ElastiCache(It is designed for caching data from various data sources, including databases and web services, not just DynamoDB.)
+2.You cannot set up multiple consumers for Kinesis Data Firehose delivery streams as it can dump data in a single data repository at a time.  
+  
+  
+3.S3 Standard-IA class is for data that is accessed less frequently but requires rapid access when needed.  
 
-Amazon EC2 Spot instances is cheaper than lambda
+4.Trusted Advisor inspects your AWS environment and makes recommendations for saving money, improving system performance, or closing security gaps. It scans your AWS infrastructure and compares it to AWS Best practices in five categories (Cost Optimization, Performance, Security, Fault Tolerance, Service limits) and then provides recommendations.  
 
-here are no S3 data transfer charges when data is transferred in from the internet. Since S3TA did not result in an accelerated transfer, there are no S3TA transfer charges to be paid.
+5.Amazon S3 supports the following destinations where it can publish events:
+  
+Amazon Simple Notification Service (Amazon SNS) topic  
+Amazon Simple Queue Service (Amazon SQS) queue  
+AWS Lambda  
+Currently, the Standard SQS queue is only allowed as an Amazon S3 event notification destination, whereas the FIFO SQS queue is not allowed.  
 
-Amazon RDS can automatically back up your database and keep your database software up to date with the latest version. However, RDS does not allow you to access the host OS of the database.
+ 
+6.There are certain limits you should keep in mind while using Amazon Kinesis Data Streams:
+  
+7.A Kinesis data stream stores records from 24 hours by default, up to 8760 hours (365 days).  
+The maximum size of a data blob (the data payload before Base64-encoding) within one record is 1 megabyte (MB). Each shard can support up to 1000 PUT records per second.   
+Kinesis is the right answer here, as by providing a partition key in your message, you can guarantee ordered messages.  
+  
+8.Instance store is ideal for the temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content, or for data that is replicated across a fleet of instances, such as a load-balanced pool of web servers.  
+  
+9.Schema changes on relational databases are not straight forward and are hard to maintain if the schema requirements change often.  
 
-RDS Custom for Oracle as it allows you to access and customize your database server host and operating system.
+10.You can't have applications consuming data streams from Kinesis Data Firehose, that's the job of Kinesis Data Streams.
+  
+11. S3 Glacier Deep Archive is up to 75% less expensive than S3 Glacier and provides retrieval within 12 hours using the Standard retrieval speed. You may also reduce retrieval costs by selecting Bulk retrieval, which will return data within 48 hours.  
+  
+12.An Auto Scaling group can contain EC2 instances in one or more Availability Zones within the same region. However, Auto Scaling groups cannot span multiple Regions.You configure the size of your Auto Scaling group by setting the minimum, maximum, and desired capacity. The minimum and maximum capacity are required to create an Auto Scaling group, while the desired capacity is optional. If you do not define your desired capacity upfront, it defaults to your minimum capacity.  
+It is not possible to modify a launch configuration once it is created. 
+  
+13.AWS Global Accelerator is like a magic tool. It gives you two special IP addresses that are super good at finding the right server no matter where it is in the world.So, no matter if your websites are hosted in different parts of the world (AWS Regions), users can always use these two special IP addresses to find the right website. This makes it easy to move websites between servers or add more websites without users having to remember new IP addresses.  
 
-To delete a CMK in AWS KMS you schedule key deletion. You can set the waiting period from a minimum of 7 days up to a maximum of 30 days. 
-
-GuardDuty analyzes continuous streams of meta-data generated from your account and network activity found in AWS CloudTrail Events, Amazon VPC Flow Logs, and DNS Logs.
-
-Amazon Inspector security assessments help you check for unintended network accessibility of your Amazon EC2 instances and for vulnerabilities on those EC2 instances
-
- While TCP is more reliable, it transfers data more slowly. UDP is less reliable but works more quickly.
-
-AWS Global Accelerator
-Amazon CloudFront 
-AWS Elastic Load Balancing (ELB)
-Amazon Route 53 
-
-Global Reach	Yes	Yes	No	Yes
-
-
-Multi-AZ follows synchronous replication and spans at least two Availability Zones within a single region. 
-Read replicas follow asynchronous replication and can be within an Availability Zone, Cross-AZ, or Cross-Region
-
-
-
-
+14.
+ 
