@@ -126,4 +126,33 @@ Use WAF IP set statement that specifies the IP addresses that you want to allow 
   
 37. Some of the AWS tasks that only a root account user can do are as follows: change account name or root password or root email address, change AWS support plan, close AWS account, enable MFA on S3 bucket delete, create Cloudfront key pair, register for GovCloud. Even though the DevOps engineer is part of the admin group, he cannot configure an Amazon S3 bucket to enable MFA delete or close the company's AWS account.  
 
-38.
+38.By default, cross-zone load balancing is enabled for Application Load Balancer and disabled for Network Load Balancer  
+
+39.DocumentDB - Amazon DocumentDB is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads. As a document database, Amazon DocumentDB makes it easy to store, query, and index JSON data. DocumentDB is not an in-memory database  
+
+40.DAX does not support SQL query caching.  
+
+41.Both ElastiCache for Redis and ElastiCache for Memcached are HIPAA Eligible.  
+
+42.Amazon Redshift is a fully-managed petabyte-scale cloud-based data warehouse product designed for large scale data set storage and analysis.  
+Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables.  
+Amazon Redshift Spectrum resides on dedicated Amazon Redshift servers that are independent of your cluster. Redshift Spectrum pushes many compute-intensive tasks, such as predicate filtering and aggregation, down to the Redshift Spectrum layer. Thus, Redshift Spectrum queries use much less of your cluster's processing capacity than other queries.  
+
+43. Direct Connect involves significant monetary investment and takes more than a month to set up, therefore it's not the correct fit for this use-case where just a one-time data transfer has to be done. Because of the high data volume for the given use-case, Site-to-Site VPN is not the correct choice.  
+  
+44. The data stored on the Snowball Edge device can be copied into the S3 bucket and later transitioned into AWS Glacier via a lifecycle policy. You can't directly copy data from Snowball Edge devices into AWS Glacier.  
+
+45. AWS Security Hub gives you a comprehensive view of your high-priority security alerts and security posture across your AWS accounts. With Security Hub, you have a single place that aggregates, organizes, and prioritizes your security alerts, or findings, from multiple AWS services, such as Amazon GuardDuty, Amazon Inspector, Amazon Macie, AWS Identity and Access Management (IAM) Access Analyzer, and AWS Firewall Manager, as well as from AWS Partner solutions.  
+
+46. AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organization. You cannot use Firewall Manager to prevent SQL injection and cross-site scripting attacks. So this option is incorrect.  
+
+47.The following URL paths can be used to get the instance meta data and user data from within the instance: http://169.254.169.254/latest/meta-data/  
+http://169.254.169.254/latest/user-data/  
+Further, you can get the instance public IP via the URL - http://169.254.169.254/latest/meta-data/public-ipv4  
+
+48.Aurora: You can quickly create clones of an Aurora DB by using the database cloning feature. In addition, database cloning uses a copy-on-write protocol, in which data is copied only at the time the data changes, either on the source database or the clone database. Cloning is much faster than a manual snapshot of the DB cluster.  
+You cannot clone databases across AWS regions. The clone databases must be created in the same region as the source databases. Currently, you are limited to 15 clones based on a copy, including clones based on other clones. After that, only copies can be created. However, each copy can also have up to 15 clones.
+
+49.After a successful write of a new object or an overwrite of an existing object, any subsequent read request immediately receives the latest version of the object.  
+
+50.All DynamoDB tables are encrypted. There is no option to enable or disable encryption for new or existing tables. By default, all tables are encrypted under an AWS owned customer master key (CMK) in the DynamoDB service account. However, you can select an option to encrypt some or all of your tables under a customer-managed CMK or the AWS managed CMK for DynamoDB in your account.  
