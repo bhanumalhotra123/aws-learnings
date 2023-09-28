@@ -5,7 +5,6 @@ Amazon Athena is an interactive query service that makes it easy to analyze data
 
 2.You cannot set up multiple consumers for Kinesis Data Firehose delivery streams as it can dump data in a single data repository at a time.  
   
-  
 3.S3 Standard-IA class is for data that is accessed less frequently but requires rapid access when needed.  
 
 4.Trusted Advisor inspects your AWS environment and makes recommendations for saving money, improving system performance, or closing security gaps. It scans your AWS infrastructure and compares it to AWS Best practices in five categories (Cost Optimization, Performance, Security, Fault Tolerance, Service limits) and then provides recommendations.  
@@ -36,6 +35,95 @@ Kinesis is the right answer here, as by providing a partition key in your messag
 It is not possible to modify a launch configuration once it is created. 
   
 13.AWS Global Accelerator is like a magic tool. It gives you two special IP addresses that are super good at finding the right server no matter where it is in the world.So, no matter if your websites are hosted in different parts of the world (AWS Regions), users can always use these two special IP addresses to find the right website. This makes it easy to move websites between servers or add more websites without users having to remember new IP addresses.  
+  
+14.Metadata, which can be included with the object, is not encrypted while being stored on Amazon S3. Therefore, AWS recommends that customers not place sensitive information in Amazon S3 metadata.  
 
-14.
- 
+15. With Server-Side Encryption with Customer-Provided Keys (SSE-C), you manage the encryption keys and Amazon S3 manages the encryption, as it writes to disks, and decryption when you access your objects.   
+ When you use server-side encryption with AWS KMS (SSE-KMS), you can specify a customer-managed CMK that you have already created. But, you never get to know the actual key here.  
+When you use Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3), each object is encrypted with a unique key. However, this option does not provide the ability to audit trail the usage of the encryption keys.  
+
+16. Amazon S3 doesn't support HTTPS access for website endpoints. If you want to use HTTPS, you can use CloudFront to serve a static website hosted on Amazon S3.  
+
+17.AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate is overkill for hosting a static single-page webpage.  
+  
+18.Depending on your Region, your Amazon S3 website endpoints follow one of these two formats.  
+ http://bucket-name.s3-website.Region.amazonaws.com  
+ http://bucket-name.s3-website-Region.amazonaws.com
+
+19. AWS WAF can be deployed on Amazon CloudFront, the Application Load Balancer (ALB), and Amazon API Gateway. It cannot be configured directly on an EC2 instance.  
+
+20. Amazon Cognito lets you add user sign-up, sign-in, and access control to your web and mobile apps quickly and easily. Amazon Cognito scales to millions of users and supports sign-in with social identity providers, such as Facebook, Google, and Amazon, and enterprise identity providers via SAML 2.0.   
+
+21. Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. APIs act as the "front door" for applications to access data, business logic, or functionality from your backend services.  
+
+22.Aurora  
+In Single-AZ, failover options are limited, and automatic failover typically requires manual intervention or backup restoration.
+In Multi-AZ, automatic failover within the same region is possible, and Aurora can promote an existing replica to a new primary instance.
+In Multi-Region, automatic failover can occur within a region, but if a region experiences a widespread failure, cross-region failover usually requires manual intervention. Aurora Global Databases can be used to facilitate cross-region replication and failover.  
+
+23. When you launch an instance, the root device volume contains the image used to boot the instance. You can choose between AMIs backed by Amazon EC2 instance store and AMIs backed by Amazon EBS.  
+By default, the root volume for an AMI backed by Amazon EBS is deleted when the instance terminates. You can change the default behavior to ensure that the volume persists after the instance terminates. Non-root EBS volumes remain available even after you terminate an instance to which the volumes were attached.  
+
+24.Redis has purpose-built commands for working with real-time geospatial data at scale. You can perform operations like finding the distance between two elements (for example people or places) and finding all elements within a given distance of a point.  
+  
+Use Amazon ElastiCache for Memcached - Both Redis and MemCached are in-memory, open-source data stores. Memcached, a high-performance distributed memory cache service, is designed for simplicity while Redis offers a rich set of features that make it effective for a wide range of use cases. Memcached does not offer support for geospatial data.  
+Redis is a feature-rich, versatile, and highly configurable in-memory data store suitable for a wide range of use cases, including those requiring geospatial data handling. Memcached, on the other hand, is a simpler, high-performance caching system that excels at basic key-value caching but lacks the advanced features and data types found in Redis.   
+
+25.AWS DataSync is an online data transfer service that simplifies, automates, and accelerates copying large amounts of data to and from AWS storage services over the internet or AWS Direct Connect.  
+  
+26.AWS Storage Gateway is a hybrid cloud storage service that gives you on-premises access to virtually unlimited cloud storage. The service provides three different types of gateways – Tape Gateway, File Gateway, and Volume Gateway – that seamlessly connect on-premises applications to cloud storage, caching data locally for low-latency access. File gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.  
+
+27.HTTP Header-Based Routing: This method involves inspecting the values of HTTP headers in incoming requests to determine how to route them. For example, you can route requests based on the User-Agent header to direct mobile users to a different backend service than desktop users. It's a flexible way to handle different types of clients or user agents.  
+  
+HTTP Method-Based Routing: Routing based on HTTP methods (GET, POST, PUT, DELETE, etc.) allows you to direct requests to different backend services based on the type of operation being performed. For instance, you can send GET requests to one set of servers and POST requests to another.  
+  
+Query String Parameter-Based Routing: This method involves examining the query parameters in the URL of an incoming request. For instance, you might route requests to different endpoints based on a query parameter like ?version=1.0. It's often used in APIs to handle versioning or to direct requests to specific functionality.
+  
+Source IP Address CIDR-Based Routing: CIDR (Classless Inter-Domain Routing) allows you to specify ranges of IP addresses. You can route requests based on the source IP address or IP range from which the request originates. This is commonly used for security purposes, such as allowing or denying access to specific IP addresses or network segments.
+  
+Path-Based Routing: This method involves routing requests based on the path component of the URL. For example, you can direct requests for /api to one backend service and requests for /images to another. Path-based routing is typically associated with reverse proxies and API gateways.
+  
+Host-Based Routing: Host-based routing is based on the hostname or domain name used in the URL. It allows you to route requests to different backend services based on the domain name in the request. For example, you can route requests for api.example.com to one service and app.example.com to another. Host-based routing is commonly used in scenarios where multiple services share the same IP address.
+
+
+28.Network Load Balancer is best suited for use-cases involving low latency and high throughput workloads that involve scaling to millions of requests per second. Network Load Balancer operates at the connection level (Layer 4), routing connections to targets - Amazon EC2 instances, microservices, and containers – within Amazon Virtual Private Cloud (Amazon VPC) based on IP protocol data.  
+
+29.Using AWS Direct Connect, data that would have previously been transported over the internet is delivered through a private network connection between your on-premises data center and AWS. 
+  
+30.Lambda cannot directly handle RESTful API requests. You can invoke a Lambda function over HTTPS by defining a custom RESTful API using Amazon API Gateway. So, Fargate with Lambda as the front-facing service is a wrong combination, though both Fargate and Lambda are serverless.  
+  
+31. the main pricing parameter while using the Direct Connect connection is the Data Transfer Out (DTO) from AWS to the on-premises data center. DTO refers to the cumulative network traffic that is sent through AWS Direct Connect to destinations outside of AWS. This is charged per gigabyte (GB), and unlike capacity measurements, DTO refers to the amount of data transferred, not the speed.Data transfer pricing over Direct Connect is lower than data transfer pricing over the internet  
+
+32.. A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your on-premises network and Amazon VPC over the Internet. IPsec is a protocol suite for securing IP communications by authenticating and encrypting each IP packet in a data stream.  
+
+33.As AWS Direct Connect does not support encrypted network connectivity between an on-premises data center and AWS Cloud. As AWS Data Sync cannot be used to establish network connectivity between an on-premises data center and AWS Cloud  
+
+32. An S3 Glacier vault is a container for storing archives. When you create a vault, you specify a vault name and the AWS Region in which you want to create the vault. S3 Glacier Vault Lock allows you to easily deploy and enforce compliance controls for individual S3 Glacier vaults with a vault lock policy. You can specify controls such as “write once read many” (WORM) in a vault lock policy and lock the policy from future edits. Therefore, this is the correct option.
+
+33.Using Amazon CloudWatch alarm actions, you can create alarms that automatically stop, terminate, reboot, or recover your EC2 instances. You can use the stop or terminate actions to help you save money when you no longer need an instance to be running. You can use the reboot and recover actions to automatically reboot those instances or recover them onto new hardware if a system impairment occurs.  
+You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically reboots the instance. The reboot alarm action is recommended for Instance Health Check failures (as opposed to the recover alarm action, which is suited for System Health Check failures).  
+Using lambda to do it is overkill.  
+
+34.Auto Scaling Group (ASG): Think of this as a group of workers (let's call them instances) that help run a computer program. The ASG makes sure that you always have the right number of workers. It does this by checking if each worker is healthy. It uses a special health check for this, like a doctor checking if someone is sick or not.  
+Application Load Balancer (ALB): This is like a smart traffic cop that takes requests (like people asking for toys) and sends them to the workers (instances) to get things done. It also wants to make sure the workers are healthy and working well.
+
+Now, here's where the problem can happen:
+
+The ALB has its own way of checking if the workers (instances) are healthy. It sends little "Are you okay?" messages to the workers (health checks).  
+  
+The ASG also checks if the workers are healthy, but it uses a different method, like asking, "Can you do your job?"  
+  
+Sometimes, the ALB's health check messages don't get a response from a worker because the worker might be slow or busy, even though it's perfectly fine to work. So, the ALB thinks the worker is sick and stops sending requests to it.
+  
+But the ASG, using its different health check, thinks the worker is okay and doesn't replace it with a new worker.
+  
+So, the ALB stops giving tasks to a good worker, and you have a worker shortage. This can cause problems for your application because not enough work is getting done.  
+
+35. Use WAF geo match statement listing the countries that you want to block
+Use WAF IP set statement that specifies the IP addresses that you want to allow through  
+
+36.Amazon EMR Elastic MapReduce is the industry-leading cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. Amazon EMR uses Hadoop, an open-source framework, to distribute your data and processing across a resizable cluster of Amazon EC2 instances.   
+  
+37. Some of the AWS tasks that only a root account user can do are as follows: change account name or root password or root email address, change AWS support plan, close AWS account, enable MFA on S3 bucket delete, create Cloudfront key pair, register for GovCloud. Even though the DevOps engineer is part of the admin group, he cannot configure an Amazon S3 bucket to enable MFA delete or close the company's AWS account.  
+
+38.
