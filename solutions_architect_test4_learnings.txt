@@ -1,1 +1,26 @@
 Test4
+
+1.Amazon SageMaker helps data scientists and developers to prepare, build, train, and deploy high-quality machine learning (ML) models quickly by bringing together a broad set of capabilities purpose-built for ML.  
+
+2.many organizations are orchestrating their containerized services with Amazon Elastic Container Service (Amazon ECS) or Amazon Elastic Kubernetes Service (Amazon EKS), while hosting their containers on Amazon EC2 or AWS Fargate. Then, they can add scalability and high availability with Service Auto Scaling (in Amazon ECS) or Horizontal Pod Auto Scaler (in Amazon EKS), and they expose the services through load balancers.  
+  
+When you use Amazon ECS as an orchestrator (with EC2 or Fargate launch type), you also have the option to expose your services with Amazon API Gateway and AWS Cloud Map instead of a load balancer. AWS Cloud Map is used for service discovery: no matter how Amazon ECS tasks scale, AWS Cloud Map service names would point to the right set of Amazon ECS tasks. Then, API Gateway HTTP APIs can be used to define API routes and point them to the corresponding AWS Cloud Map services.  
+
+3. Alias records let you route traffic to selected AWS resources, such as CloudFront distributions and Amazon S3 buckets. They also let you route traffic from one record in a hosted zone to another record. Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also known as the zone apex. For example, if you register the DNS name example.com, the zone apex is example.com. You can't create a CNAME record for example.com, but you can create an alias record for example.com that routes traffic to www.example.com.
+
+4.Simple DNS records, such as A and CNAME records, do not support health checks directly. Health checks are typically associated with other types of DNS records, like the "Alias" records (e.g., ALIAS and CAA records) or weighted routing records. These records allow you to configure routing policies based on the health of the underlying resources.  
+If you need to perform health checks and route traffic based on the health status of your resources, you may want to consider using Alias records (which can point to AWS resources like ELB or S3 buckets) or weighted routing policies in combination with health checks.  
+
+5. TTL is still in effect so you have to wait until it expires for the new request to perform another DNS query and get the value for the new Load Balancer.  
+
+6.A DynamoDB stream is an ordered flow of information about changes to items in a DynamoDB table. When you enable a stream on a table, DynamoDB captures information about every modification to data items in the table. Whenever an application creates, updates, or deletes items in the table, DynamoDB Streams writes a stream record with the primary key attributes of the items that were modified. A stream record contains information about a data modification to a single item in a DynamoDB table.  
+ It can be chained with a Lambda function that will be triggered to react to these changes.  
+
+7.Types of storage gateways:   
+File Gateway: AWS File Gateway enables seamless access to Amazon S3 objects as files, making it suitable for file-based storage, backup, and archive use cases.  
+Volume Gateway: AWS Volume Gateway offers block-based storage for applications using iSCSI, with two modes: Cached Volumes for primary data storage and Stored Volumes for full data snapshots and backups.    
+Tape Gateway: AWS Tape Gateway emulates a virtual tape library (VTL), allowing on-premises applications to archive data to Amazon S3 and Amazon Glacier as if they were using physical tape backups.  
+
+AWS DataSync supports only NFS and SMB file types  
+  
+8.
