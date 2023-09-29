@@ -23,4 +23,40 @@ Tape Gateway: AWS Tape Gateway emulates a virtual tape library (VTL), allowing o
 
 AWS DataSync supports only NFS and SMB file types  
   
+8.Field-level encryption allows you to enable your users to securely upload sensitive information to your web servers. The sensitive information provided by your users is encrypted at the edge, close to the user, and remains encrypted throughout your entire application stack. This encryption ensures that only applications that need the data—and have the credentials to decrypt it—are able to do so.
+  
+To use field-level encryption, when you configure your CloudFront distribution, specify the set of fields in POST requests that you want to be encrypted, and the public key to use to encrypt them. You can encrypt up to 10 data fields in a request. (You can’t encrypt all of the data in a request with field-level encryption; you must specify individual fields to encrypt.)  
+
+CloudFront can only route to multiple origins based on content type and not on the basis of the price class.  
+  Use an origin group with primary and secondary origins to configure CloudFront for high availability and failover.  
+
+9.AWS Snowcone: Snowcone is the smallest and most portable device in the Snow Family. It is designed for remote, edge, or disconnected environments where you need to collect and transfer data. It's small, lightweight, and can fit in a backpack.  
+AWS Snowball: Snowball is a larger data transfer device with multiple options, including Snowball Edge and Snowball. It's suitable for larger data transfer jobs and can be used in situations where you need to transfer data from on-premises data centers to AWS.  
+
+AWS Snowball Edge: Snowball Edge includes more storage and compute capabilities than Snowball. It's designed for data migration, edge computing, and running AWS Lambda functions in edge locations. Snowball Edge comes in two models: Storage Optimized and Compute Optimized.
+  
+AWS Snowmobile: Snowmobile is a massive, rugged shipping container-sized device designed for transferring exabytes of data to AWS. It's used for very large-scale data center migrations.
+
+10.SSL/TLS handshake process with each step attributed to the client and server in the correct sequence:
+
+Client:  
+Initiates the handshake by sending a "ClientHello" message.  
+Server:  
+2. Responds with a "ServerHello" message, selecting the appropriate cipher suite.  
+Server:  
+3. Sends its SSL certificate to the client.   
+Client:  
+4. Validates the server's certificate, ensuring it's from a trusted source and matches the intended domain.    
+Client:  
+5. Generates a session key, encrypts it with the server's public key, and sends it to the server.  
+Server:  
+6. Decrypts the session key using its private key.    
+Both Client and Server:  
+7. Use the shared session key for encrypting and decrypting data transmitted between them, ensuring secure communication.  
+  
+Use SSL certificates with SNI: It allows you to host multiple secured applications with different certificates behind one load balancer, automatically selecting the right certificate based on the requested domain.  
+Use a wildcard SSL certificate: It secures multiple subdomains under one domain using a single certificate, simplifying certificate management.  
+Use an HTTP to HTTPS redirect: It enforces secure connections by automatically redirecting HTTP traffic to HTTPS but doesn't create multiple secure endpoints for different URLs.  
+Change the ELB SSL Security Policy: It configures the security protocols and ciphers for SSL/TLS connections on an Elastic Load Balancer but doesn't inherently provide multiple secure endpoints for different URLs or domains.
+
 8.
