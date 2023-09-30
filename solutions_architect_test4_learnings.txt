@@ -171,7 +171,7 @@ when you attach a role to a service, AWS manages the trust relationship internal
 
 33.API Gateway caching is specifically focused on caching API responses within the context of your API endpoints, while CloudFront is a broader CDN service that can cache and accelerate the delivery of various types of content, including API responses.  
 
-32.  Copying an AMI across regions involves copying the root volume of your instance, which includes the OS and your software stack.  
+34.  Copying an AMI across regions involves copying the root volume of your instance, which includes the OS and your software stack.  
 AMIs are Region-specific and need to be copied to all Regions they are intended to be used in.  
 
 Instance Store (Ephemeral Storage):
@@ -186,8 +186,89 @@ EBS volumes are network-attached and designed for durability and persistence.
 The root volume of an EBS-backed instance is a separate EBS volume that can be detached from the instance and managed independently.
 When you create an EBS-backed AMI, it primarily includes the configuration and metadata necessary to launch an EC2 instance with the specified EBS volumes and configurations.
 EBS volumes are not tightly coupled to the instance in the same way that instance store volumes are. They can be detached from one instance and attached to another, or you can create snapshots and use those snapshots to create new volumes.
+  
 When you copy an EBS-backed AMI to another region, you are copying the AMI's metadata and configuration. The EBS volumes are not automatically copied as part of this process because they are separate resources that can be managed independently.  
 
 The copied Amazon Machine Image (AMI) includes a reference to the snapshot ID of the root Elastic Block Store (EBS) volume that contains the operating system and data. When you launch an EC2 instance from the copied AMI in another region, AWS uses that snapshot ID to create a new EBS volume that is an exact replica of the original EBS snapshot.
 
-This process ensures that you can launch instances with the same operating system and data as the source region, even though the actual data transfer occurs when the new EBS volume is created in the target region based on the referenced EBS snapshot  
+This process ensures that you can launch instances with the same operating system and data as the source region, even though the actual data transfer occurs when the new EBS volume is created in the target region based on the referenced EBS snapshot   
+
+35. Amazon Kinesis Data Firehose is used to efficiently ingest and deliver streaming data to various AWS services, simplifying the process of handling real-time data streams, while Amazon Kinesis Data Streams is used for more custom and flexible real-time data processing and analytics.   
+      Kinesis Data Streams can indeed be used to process real-time streaming data, and it offers a great deal of flexibility and control. However, Kinesis Data Analytics is a valuable addition, especially when you want to rapidly develop real-time data analytics solutions using SQL queries and take advantage of its ease of use, automatic scaling, and integration with other AWS services.  
+
+36.A bucket policy is a type of resource-based policy that can be used to grant permissions to the principal that is specified in the policy. Principals can be in the same account as the resource or in other accounts. For cross-account permissions to other AWS accounts or users in another account, you must use a bucket policy.  
+
+37., DMS is specialized for database migration and replication, while DataSync is optimized for efficient and secure data transfer between storage systems and cloud services  
+
+Use DMS when:
+  
+You need to migrate or replicate data between different database engines.
+Real-time data replication or Change Data Capture (CDC) is required for databases.
+Data transformation and filtering are necessary during migration.
+  
+Use DataSync when:
+  
+You need to transfer files or objects between different storage systems or cloud services, such as on-premises file servers to Amazon S3.
+High-speed and efficient data transfer is a priority.
+Data integrity and security during transfer are important.
+  
+Use Storage Gateway when:
+  
+You have on-premises applications that need access to cloud storage without significant changes.
+You want to extend your on-premises data center to the AWS cloud seamlessly.
+You need low-latency access to frequently used data through caching.
+You have a mix of file, block, or tape storage requirements in a hybrid environment.
+  
+38. For Pilot light, RPO/RTO is in 10s of minutes.  
+ a pilot light by configuring and running the most critical core elements of your system in AWS. For the given use-case, a small part of the backup infrastructure is always running simultaneously syncing mutable data (such as databases or documents) so that there is no loss of critical data.  
+  
+39.Amazon ElastiCache is an ideal front-end for data stores such as Amazon RDS, providing a high-performance middle tier for applications with extremely high request rates and/or low latency requirements. The best part of caching is that it’s minimally invasive to implement and by doing so, your application performance regarding both scale and speed is dramatically improved.  
+
+40.General Purpose SSD (gp2):
+
+The burst capability of gp2 volumes is primarily useful when the baseline performance is lower than the burst limit, allowing workloads that have occasional, short-term spikes in I/O activity to utilize the burst capacity. However, if your baseline is set to 10,000 IOPS, the volume will consistently provide that level of performance, and there would be no need to rely on bursts.  
+  
+Baseline IOPS: 3 IOPS per GiB (minimum 100 IOPS)
+Maximum Burst IOPS: Up to 3,000 IOPS           
+Maximum Sustained IOPS:
+For volumes smaller than 1 TiB: Up to 16,000 IOPS
+For volumes 1 TiB or larger: Up to 16,000 IOPS
+Baseline Throughput: 128 MiB/s (up to 250 MiB/s for larger volumes)
+
+  
+Provisioned IOPS SSD (io1):
+  
+You specify the IOPS rate when creating the volume (up to 64,000 IOPS)
+Throughput is determined by the specified IOPS rate
+   
+Throughput Optimized HDD (st1):
+    
+Throughput is the primary metric (scales with volume size)
+Varies based on volume size and can go up to 500 MiB/s per volume  
+
+42.S3 Glacier Vault is designed for long-term archival storage, offering low-cost storage with retrieval times measured in hours. Object Lock, on the other hand, is a feature within S3 that helps enforce data retention policies and legal requirements by preventing object deletion or alteration for a specified duration, making it suitable for compliance and data governance use cases. The choice between them depends on your specific storage and data retention needs.  
+
+43.AWS Glacier Vault is a management and organization construct within the Glacier service, allowing you to structure your archived data, control access, and set policies and notifications for the archives contained within it.  
+
+44.Balance instances across Availability Zones, considering those without scale-in protection.  
+Identify instances for termination to align with allocation strategy (On-Demand or Spot).  
+Determine oldest launch template, unless launch configurations are in use.  
+If launch configurations exist, select the oldest one.  
+If multiple unprotected instances remain, prioritize those closest to the next billing hour.  
+
+45.Imagine you have a magical box called Amazon S3, where you keep your favorite toys. Sometimes, you want to make a copy of your toys and put them in another magical box.  
+With S3 Batch Replication, it's like having a special helper who can copy all your toys, even the ones you had before you asked for help, and even the ones you tried to copy but couldn't. This helper does this in one big operation, like a superhero job.  
+But there's also a different way, like a toy fairy who copies your new toys automatically as soon as you get them. This is called live replication, but it can't copy your old toys unless you ask the fairy for special help by talking to a grown-up at Amazon (AWS Support).  
+So, S3 Batch Replication is like a big, one-time copying event for all your toys, while live replication is like having a fairy that copies your new toys right away.    
+46.  
+The aws S3 sync command uses the CopyObject APIs to copy objects between S3 buckets. The sync command lists the source and target buckets to identify objects that are in the source bucket but that aren't in the target bucket. The command also identifies objects in the source bucket that have different LastModified dates than the objects that are in the target bucket. The sync command on a versioned bucket copies only the current version of the object—previous versions aren't copied. By default, this preserves object metadata, but the access control lists (ACLs) are set to FULL_CONTROL for your AWS account, which removes any additional ACLs. If the operation fails, you can run the sync command again without duplicating previously copied objects.  
+You can use the command like so:  
+aws s3 sync s3://DOC-EXAMPLE-BUCKET-SOURCE s3://DOC-EXAMPLE-BUCKET-TARGET  
+
+47.You can authenticate to your DB instance using AWS Identity and Access Management (IAM) database authentication. IAM database authentication works with MySQL and PostgreSQL. With this authentication method, you don't need to use a password when you connect to a DB instance. Instead, you use an authentication token.
+  
+An authentication token is a unique string of characters that Amazon RDS generates on request. Authentication tokens are generated using AWS Signature Version 4. Each token has a lifetime of 15 minutes. You don't need to store user credentials in the database, because authentication is managed externally using IAM. You can also still use standard database authentication.
+  
+IAM database authentication provides the following benefits: 1. Network traffic to and from the database is encrypted using Secure Sockets Layer (SSL). 2. You can use IAM to centrally manage access to your database resources, instead of managing access individually on each DB instance. 3. For applications running on Amazon EC2, you can use profile credentials specific to your EC2 instance to access your database instead of a password, for greater security.  
+
+48.Q.22
