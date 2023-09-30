@@ -59,4 +59,44 @@ Use a wildcard SSL certificate: It secures multiple subdomains under one domain 
 Use an HTTP to HTTPS redirect: It enforces secure connections by automatically redirecting HTTP traffic to HTTPS but doesn't create multiple secure endpoints for different URLs.  
 Change the ELB SSL Security Policy: It configures the security protocols and ciphers for SSL/TLS connections on an Elastic Load Balancer but doesn't inherently provide multiple secure endpoints for different URLs or domains.
 
-8.
+8.By default, Lambda functions always operate from an AWS-owned VPC and hence have access to any public internet address or public AWS APIs. Once a Lambda function is VPC-enabled, it will need a route through a NAT gateway in a public subnet to access public resources   
+
+Since Lambda functions can scale extremely quickly, its a good idea to deploy a CloudWatch Alarm that notifies your team when function metrics such as ConcurrentExecutions or Invocations exceeds the expected threshold  
+  
+You can configure your Lambda function to pull in additional code and content in the form of layers. A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies. With layers, you can use libraries in your function without needing to include them in your deployment package. Layers let you keep your deployment package small, which makes development easier. A function can use up to 5 layers at a time.
+  
+You can create layers, or use layers published by AWS and other AWS customers. Layers support resource-based policies for granting layer usage permissions to specific AWS accounts, AWS Organizations, or all accounts. The total unzipped size of the function and all layers can't exceed the unzipped deployment package size limit of 250 MB.  
+
+Overprovisioning function timeout often results in Lambda functions running longer than expected and unexpected costs.  
+You can now package and deploy Lambda functions as container images. All the dependencies are also packaged into the single Lambda deployment package.  
+
+9.Use AWS Cost Explorer Resource Optimization to get a report of EC2 instances that are either idle or have low utilization and use AWS Compute Optimizer to look at instance type recommendations  
+ Amazon S3 analytics feature observes data access patterns to help you determine when to transition less frequently accessed STANDARD storage to the STANDARD_IA (IA, for infrequent access) storage class. Storage class analysis does not give recommendations for transitions to the ONEZONE_IA or S3 Glacier storage classes  
+
+AWS Trusted Advisor checks for Amazon EC2 Reserved Instances that are scheduled to expire within the next 30 days or have expired in the preceding 30 days. Reserved Instances do not renew automatically; you can continue using an EC2 instance covered by the reservation without interruption, but you will be charged On-Demand rates. Trusted advisor does not have a feature to auto-renew Reserved Instances.  
+
+Compute Optimizer helps you choose the optimal Amazon EC2 instance types, including those that are part of an Amazon EC2 Auto Scaling group, based on your utilization data. It does not recommend instance purchase options.  
+
+10.Set up a DynamoDB table in the on-demand capacity mode (Correct):
+  
+Choose on-demand capacity mode when you have unpredictable or bursty workloads, or if you prefer paying only for what you use.
+DynamoDB automatically allocates capacity as needed without the concept of provisioned capacity.
+Ideal for quickly spiking traffic, unpredictable workloads, and when underprovisioned capacity would impact user experience.
+Suitable for moving to a NoOps or serverless environment where capacity is managed automatically.
+Set up a DynamoDB table in the provisioned capacity mode with auto-scaling enabled (Incorrect):
+  
+This is not the right choice for unpredictable workloads.
+Provisioned capacity mode is designed for scenarios where you have predictable application traffic.
+Auto-scaling can help adjust capacity based on traffic changes, but it's more suited for applications with consistent or gradually increasing traffic.
+Set up a DynamoDB table with a global secondary index (Incorrect):
+  
+A global secondary index (GSI) is an additional index that you create on a DynamoDB table.
+GSIs are useful for querying data in different ways, but they don't affect the capacity mode (on-demand or provisioned) of the table.
+GSIs are not designed to handle unpredictable or bursty traffic patterns; their purpose is to provide more querying flexibility.
+Set up a DynamoDB global table in the provisioned capacity mode (Incorrect):
+  
+DynamoDB global tables are used to replicate data across multiple AWS Regions for high availability and disaster recovery.
+Provisioned capacity mode in a global table means you specify a fixed amount of capacity for each region, which is not suitable for unpredictable workloads.
+Global tables are primarily used to provide fast, local read and write performance for global applications but don't directly address unpredictable traffic.
+  
+
