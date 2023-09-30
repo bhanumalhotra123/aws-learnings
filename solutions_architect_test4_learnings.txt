@@ -83,20 +83,72 @@ Choose on-demand capacity mode when you have unpredictable or bursty workloads, 
 DynamoDB automatically allocates capacity as needed without the concept of provisioned capacity.
 Ideal for quickly spiking traffic, unpredictable workloads, and when underprovisioned capacity would impact user experience.
 Suitable for moving to a NoOps or serverless environment where capacity is managed automatically.
-Set up a DynamoDB table in the provisioned capacity mode with auto-scaling enabled (Incorrect):
+   
+Set up a DynamoDB table in the provisioned capacity mode with auto-scaling enabled :
   
 This is not the right choice for unpredictable workloads.
 Provisioned capacity mode is designed for scenarios where you have predictable application traffic.
 Auto-scaling can help adjust capacity based on traffic changes, but it's more suited for applications with consistent or gradually increasing traffic.
-Set up a DynamoDB table with a global secondary index (Incorrect):
+   
+Set up a DynamoDB table with a global secondary index :
   
 A global secondary index (GSI) is an additional index that you create on a DynamoDB table.
 GSIs are useful for querying data in different ways, but they don't affect the capacity mode (on-demand or provisioned) of the table.
 GSIs are not designed to handle unpredictable or bursty traffic patterns; their purpose is to provide more querying flexibility.
-Set up a DynamoDB global table in the provisioned capacity mode (Incorrect):
+  
+Set up a DynamoDB global table in the provisioned capacity mode:
   
 DynamoDB global tables are used to replicate data across multiple AWS Regions for high availability and disaster recovery.
 Provisioned capacity mode in a global table means you specify a fixed amount of capacity for each region, which is not suitable for unpredictable workloads.
 Global tables are primarily used to provide fast, local read and write performance for global applications but don't directly address unpredictable traffic.
   
+11.AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain account activity related to actions across your AWS infrastructure. CloudTrail provides event history of your AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command-line tools, and other AWS services.
+  
+In general, to analyze any API calls made within an AWS account, CloudTrail is used. You can record the actions that are taken by users, roles, or AWS services on Amazon S3 resources and maintain log records for auditing and compliance purposes. To do this, you can use server access logging, AWS CloudTrail logging, or a combination of both. AWS recommends that you use AWS CloudTrail for logging bucket and object-level actions for your Amazon S3 resources.
 
+12.Elastic IPs do not need to be assigned to EC2 instances while using an Application Load Balancer.  
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html  
+
+13.Amazon RDS for PostgreSQL, like other RDS database engines, supports SSL/TLS encryption for database connections. Here's how SSL/TLS encryption in transit works with Amazon RDS for PostgreSQL  
+
+14.Amazon DynamoDB: DynamoDB supports multi-region deployments through Global Tables, providing automatic failover between regions for high availability.
+Amazon Neptune: Neptune supports multi-region deployments with Neptune Global, offering failover and read replicas across regions for global availability and disaster recovery.  
+PostgreSQL on Amazon RDS: PostgreSQL on RDS, in its standard configuration, does not natively support multi-region deployments for database replication. Cross-region replication would need to be implemented using custom solutions or third-party tools.  
+Amazon Aurora: Amazon Aurora supports multi-region deployments through Amazon Aurora Global Databases, allowing you to create cross-region read replicas and promoting them to primary clusters in the event of a primary region failure.  
+
+15.Amazon MQ is a managed message broker service for Apache ActiveMQ that makes it easy to set up and operate message brokers in the cloud. Message brokers allow different software systems–often using different programming languages, and on different platforms–to communicate and exchange information. If an organization is using messaging with existing applications and wants to move the messaging service to the cloud quickly and easily, AWS recommends Amazon MQ for such a use case. Connecting your current applications to Amazon MQ is easy because it uses industry-standard APIs and protocols for messaging, including JMS, NMS, AMQP, STOMP, MQTT, and WebSocket.  
+
+16.Multi Site - A multi-site solution runs in AWS as well as on your existing on-site infrastructure, in an active-active configuration. The data replication method that you employ will be determined by the recovery point that you choose.  
+
+17.Amazon Elasticsearch is designed for full-text search and analytics on large volumes of data. While it can be used to index and search structured data, it's not optimized for handling complex relational queries and transactional data, which is often the case in social media applications.  
+
+18.Amazon Neptune - Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets. The core of Amazon Neptune is a purpose-built, high-performance graph database engine optimized for storing billions of relationships and querying the graph with milliseconds latency. Neptune powers graph use cases such as recommendation engines, fraud detection, knowledge graphs, drug discovery, and network security.  
+Amazon Neptune is highly available, with read replicas, point-in-time recovery, continuous backup to Amazon S3, and replication across Availability Zones. Neptune is secure with support for HTTPS encrypted client connections and encryption at rest. Neptune is fully managed, so you no longer need to worry about database management tasks such as hardware provisioning, software patching, setup, configuration, or backups.  
+Amazon Neptune can quickly and easily process large sets of user-profiles and interactions to build social networking applications. Neptune enables highly interactive graph queries with high throughput to bring social features into your applications. For example, if you are building a social feed into your application, you can use Neptune to provide results that prioritize showing your users the latest updates from their family, from friends whose updates they ‘Like,’ and from friends who live close to them.
+
+19.When cross-zone load balancing is enabled, each load balancer node distributes traffic across the registered targets in all enabled Availability Zones. When cross-zone load balancing is disabled, each load balancer node distributes traffic only across the registered targets in its Availability Zone.  
+
+20.You can use EC2 user data to customize the dynamic installation parts at boot time, rather than installing the application itself at boot time.  
+
+21.AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and services developed with Java, .NET, PHP, Node.js, Python, Ruby, Go, and Docker on familiar servers such as Apache, Nginx, Passenger, and IIS.  
+You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring. At the same time, you retain full control over the AWS resources powering your application and can access the underlying resources at any time.  
+When you create an AWS Elastic Beanstalk environment, you can specify an Amazon Machine Image (AMI) to use instead of the standard Elastic Beanstalk AMI included in your platform version. A custom AMI can improve provisioning times when instances are launched in your environment if you need to install a lot of software that isn't included in the standard AMIs.  
+
+22.RDS Multi-AZ helps with disaster recovery in case of an AZ failure. ElastiCache would definitely help with the read load, but would require a refactor of the application's core logic. DynamoDB with DAX would also probably help with the read load, but once again it would require a refactor of the application's core logic. Here, our only option to scale reads is to use RDS Read Replicas   
+
+23.SSM Parameter Store - AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, and license codes as parameter values. SSM Parameter Store cannot be used to automatically rotate the database credentials.  
+
+24.AWS Secrets Manager enables you to easily rotate, manage, and retrieve database credentials, API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets with a call to Secrets Manager APIs, eliminating the need to hardcode sensitive information in plain text. Secrets Manager offers secret rotation with built-in integration for Amazon RDS, Amazon Redshift, and Amazon DocumentDB.  
+
+25. manual backups using Redis append-only file (AOF) - Manual backups using AOF are retained indefinitely and are useful for testing and archiving. You can schedule manual backups to occur up to 20 times per node within any 24-hour period. Although AOF provides a measure of fault tolerance, it can't protect your data from a hardware-related cache node failure, so there is a risk of data loss.  
+
+26. DynamoDB Streams is a powerful service that you can combine with other AWS services to solve many problems. When enabled, DynamoDB Streams captures a time-ordered sequence of item-level modifications in a DynamoDB table and durably stores the information for up to 24 hours. Applications can access a series of stream records, which contain an item change, from a DynamoDB stream in near real-time.  
+
+27.A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network.  
+Endpoints are virtual devices. They are horizontally scaled, redundant, and highly available VPC components. They allow communication between instances in your VPC and services without imposing availability risks or bandwidth constraints on your network traffic.  
+There are two types of VPC endpoints: Interface Endpoints and Gateway Endpoints. An Interface Endpoint is an Elastic Network Interface with a private IP address from the IP address range of your subnet that serves as an entry point for traffic destined to a supported service.  
+A Gateway Endpoint is a gateway that you specify as a target for a route in your route table for traffic destined to a supported AWS service. The following AWS services are supported: Amazon S3 and DynamoDB.  
+You can use two types of VPC endpoints to access Amazon S3: gateway endpoints and interface endpoints. A gateway endpoint is a gateway that you specify in your route table to access Amazon S3 from your VPC over the AWS network. Interface endpoints extend the functionality of gateway endpoints by using private IP addresses to route requests to Amazon S3 from within your VPC, on premises, or from a VPC in another AWS Region using VPC peering or AWS Transit Gateway.
+  
+You must remember that these two services use a VPC gateway endpoint. The rest of the AWS services use VPC interface endpoints.
+  
