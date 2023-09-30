@@ -152,3 +152,42 @@ You can use two types of VPC endpoints to access Amazon S3: gateway endpoints an
   
 You must remember that these two services use a VPC gateway endpoint. The rest of the AWS services use VPC interface endpoints.
   
+28.Network Load Balancers expose a fixed IP to the public web, therefore allowing your application to be predictably reached using these IPs, while allowing you to scale your application behind the Network Load Balancer using an ASG.  
+Yes, clients typically connect to Network Load Balancers (NLBs) using DNS names, similar to how they connect to Application Load Balancers (ALBs). The primary difference is that NLBs have static Elastic IP (EIP) addresses associated with their DNS names, providing stable and predictable entry points for client traffic.    
+29.Cluster – packs instances close together inside an Availability Zone. This strategy enables workloads to achieve the low-latency network performance necessary for tightly-coupled node-to-node communication that is typical of HPC applications.  
+Partition – spreads your instances across logical partitions such that groups of instances in one partition do not share the underlying hardware with groups of instances in different partitions. This strategy is typically used by large distributed and replicated workloads, such as Hadoop, Cassandra, and Kafka.  
+Spread – strictly places a small group of instances across distinct underlying hardware to reduce correlated failures.  
+
+30.Amazon EventBridge is recommended when you want to build an application that reacts to events from SaaS applications and/or AWS services.   
+  
+Amazon EventBridge is the only event-based service that integrates directly with third-party SaaS partners.  
+  
+Amazon EventBridge also automatically ingests events from over 90 AWS services without requiring developers to create any resources in their account. Further, Amazon EventBridge uses a defined JSON-based structure for events and allows you to create rules that are applied across the entire event body to select events to forward to a target. Amazon EventBridge currently supports over 15 AWS services as targets, including AWS Lambda, Amazon SQS, Amazon SNS, and Amazon Kinesis Streams and Firehose, among others. At launch, Amazon EventBridge is has limited throughput (see Service Limits) which can be increased upon request, and typical latency of around half a second.  
+
+31.Yes, you are correct. Attaching a role to an AWS service and adding that service to the trust policy achieve a similar outcome.  (using trust policies keeps list of permitted resources at one place)  
+when you attach a role to a service, AWS manages the trust relationship internally, and you don't need to manually edit the trust policy of the role to specify the service. Instead, you define the trust policy when you create the role, and it applies to any service instance or entity that you subsequently attach the role to, as long as it meets the conditions specified in the trust policy.  
+
+32.Adding read replicas add to costs, api caching lessens the cost.
+
+33.API Gateway caching is specifically focused on caching API responses within the context of your API endpoints, while CloudFront is a broader CDN service that can cache and accelerate the delivery of various types of content, including API responses.  
+
+32.  Copying an AMI across regions involves copying the root volume of your instance, which includes the OS and your software stack.  
+AMIs are Region-specific and need to be copied to all Regions they are intended to be used in.  
+
+Instance Store (Ephemeral Storage):
+  
+Instance store volumes are physically attached to the host machine where your EC2 instance runs.
+The contents of instance store volumes are ephemeral, meaning they are not meant to persist beyond the life of the instance.
+When you create an instance store-backed AMI, it includes both the AMI metadata and the contents of the instance store volumes because they are tightly coupled to the instance itself. The instance store is considered local storage for the instance.
+As a result, when you copy an instance store-backed AMI to another region, you are effectively copying both the AMI configuration and the local storage contents.
+EBS-Backed Storage:
+
+EBS volumes are network-attached and designed for durability and persistence.
+The root volume of an EBS-backed instance is a separate EBS volume that can be detached from the instance and managed independently.
+When you create an EBS-backed AMI, it primarily includes the configuration and metadata necessary to launch an EC2 instance with the specified EBS volumes and configurations.
+EBS volumes are not tightly coupled to the instance in the same way that instance store volumes are. They can be detached from one instance and attached to another, or you can create snapshots and use those snapshots to create new volumes.
+When you copy an EBS-backed AMI to another region, you are copying the AMI's metadata and configuration. The EBS volumes are not automatically copied as part of this process because they are separate resources that can be managed independently.  
+
+The copied Amazon Machine Image (AMI) includes a reference to the snapshot ID of the root Elastic Block Store (EBS) volume that contains the operating system and data. When you launch an EC2 instance from the copied AMI in another region, AWS uses that snapshot ID to create a new EBS volume that is an exact replica of the original EBS snapshot.
+
+This process ensures that you can launch instances with the same operating system and data as the source region, even though the actual data transfer occurs when the new EBS volume is created in the target region based on the referenced EBS snapshot  
