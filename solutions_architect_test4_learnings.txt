@@ -271,4 +271,16 @@ An authentication token is a unique string of characters that Amazon RDS generat
   
 IAM database authentication provides the following benefits: 1. Network traffic to and from the database is encrypted using Secure Sockets Layer (SSL). 2. You can use IAM to centrally manage access to your database resources, instead of managing access individually on each DB instance. 3. For applications running on Amazon EC2, you can use profile credentials specific to your EC2 instance to access your database instead of a password, for greater security.  
 
-48.Q.22
+48.Transit Gateway surpasses Transit VPC for this use-case due to several advantages:  
+Simplified Connectivity: Transit Gateway eliminates the complexity of maintaining VPN connections across numerous VPCs.  
+Appliance-Free Routing: It negates the need for managing and scaling EC2-based software appliances, as AWS handles all routing resources.  
+High Availability Assurance: Transit Gateway provides a highly available, redundant Multi-AZ infrastructure, sparing you from managing high availability.  
+Enhanced Bandwidth: It enhances inter-VPC communication bandwidth, reaching burst speeds of 50 Gbps per AZ.  
+Transparent Cost Model: With Transit Gateway, user costs follow a straightforward per-hour, per-GB transferred model.  
+Reduced Latency: By removing EC2 proxies and VPN encapsulation, Transit Gateway decreases latency.    
+
+49.In DynamoDB, a similar thing can happen. Data is divided into partitions based on a primary key. If lots of requests go to the same partition quickly (like everyone trying to access the same type of data), that partition can get "hot" and slow down because it's handling too much traffic.  
+
+50.An Egress-Only Internet Gateway is a horizontally scaled, redundant, and highly available VPC component that allows outbound communication over IPv6 from instances in your VPC to the Internet, and prevents the Internet from initiating an IPv6 connection with your instances. Egress-Only Internet Gateway cannot be used to connect on-premises data centers to AWS Cloud.  
+
+51.
