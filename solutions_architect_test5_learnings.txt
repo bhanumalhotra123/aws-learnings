@@ -1,9 +1,8 @@
 Test5  
 1.Amazon Transcribe is an automatic speech recognition (ASR) service that makes it easy to convert audio to text. One key feature of the service is called speaker identification.  
-
 Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless.  
-
-2.You cannot set up multiple consumers for Kinesis Data Firehose delivery streams as it can dump data in a single data repository at a time.  
+Amazon Athena is primarily designed for querying data stored in Amazon S3.  
+  
   
 3.S3 Standard-IA class is for data that is accessed less frequently but requires rapid access when needed.  
 
@@ -22,12 +21,15 @@ Currently, the Standard SQS queue is only allowed as an Amazon S3 event notifica
 7.A Kinesis data stream stores records from 24 hours by default, up to 8760 hours (365 days).  
 The maximum size of a data blob (the data payload before Base64-encoding) within one record is 1 megabyte (MB). Each shard can support up to 1000 PUT records per second.   
 Kinesis is the right answer here, as by providing a partition key in your message, you can guarantee ordered messages.  
+ In Amazon Kinesis Data Streams, if you provide the same partition key with multiple data records, those data records will go to the same shard. This ensures that data records with the same partition key are processed together in the order they were ingested within that shard.  
   
 8.Instance store is ideal for the temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content, or for data that is replicated across a fleet of instances, such as a load-balanced pool of web servers.  
   
 9.Schema changes on relational databases are not straight forward and are hard to maintain if the schema requirements change often.  
-
+ NoSQL databases or schemaless databases are chosen when the schema is expected to evolve rapidly, as they provide more flexibility in handling unstructured or semi-structured data without requiring strict schema changes.  
+  
 10.You can't have applications consuming data streams from Kinesis Data Firehose, that's the job of Kinesis Data Streams.
+  Kinesis Data Streams is used when you need fine-grained control over stream processing and real-time data analysis within your applications. In contrast, Kinesis Data Firehose is used when you want to easily and reliably load streaming data into other AWS services without the need for custom stream processing applications.  
   
 11. S3 Glacier Deep Archive is up to 75% less expensive than S3 Glacier and provides retrieval within 12 hours using the Standard retrieval speed. You may also reduce retrieval costs by selecting Bulk retrieval, which will return data within 48 hours.  
   
@@ -35,6 +37,8 @@ Kinesis is the right answer here, as by providing a partition key in your messag
 It is not possible to modify a launch configuration once it is created. 
   
 13.AWS Global Accelerator is like a magic tool. It gives you two special IP addresses that are super good at finding the right server no matter where it is in the world.So, no matter if your websites are hosted in different parts of the world (AWS Regions), users can always use these two special IP addresses to find the right website. This makes it easy to move websites between servers or add more websites without users having to remember new IP addresses.  
+
+ If your endpoints are behind Elastic Load Balancers (ELBs), you can configure Global Accelerator to route traffic to the ELB DNS names rather than individual IP addresses. ELB endpoints are dynamic, and ELBs automatically manage the routing of traffic to healthy instances. This can reduce the need for frequent updates to Global Accelerator configurations when instances change.  
   
 14.Metadata, which can be included with the object, is not encrypted while being stored on Amazon S3. Therefore, AWS recommends that customers not place sensitive information in Amazon S3 metadata.  
 
@@ -42,6 +46,9 @@ It is not possible to modify a launch configuration once it is created.
  When you use server-side encryption with AWS KMS (SSE-KMS), you can specify a customer-managed CMK that you have already created. But, you never get to know the actual key here.  
 When you use Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3), each object is encrypted with a unique key. However, this option does not provide the ability to audit trail the usage of the encryption keys.  
 
+ In SSE-KMS, you can choose to use either AWS-managed keys (AWS Managed CMKs) or customer-managed keys (Customer-Managed CMKs). This gives you the flexibility to either let AWS manage the encryption keys for you or use your own keys for added control and security.
+On the other hand, Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3) only uses Amazon S3-managed keys. You do not have the option to specify your own keys or manage key policies. SSE-S3 is a simpler, fully managed encryption option where Amazon S3 handles all aspects of key management on your behalf.  
+  
 16. Amazon S3 doesn't support HTTPS access for website endpoints. If you want to use HTTPS, you can use CloudFront to serve a static website hosted on Amazon S3.  
 
 17.AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate is overkill for hosting a static single-page webpage.  
@@ -69,7 +76,7 @@ By default, the root volume for an AMI backed by Amazon EBS is deleted when the 
 Use Amazon ElastiCache for Memcached - Both Redis and MemCached are in-memory, open-source data stores. Memcached, a high-performance distributed memory cache service, is designed for simplicity while Redis offers a rich set of features that make it effective for a wide range of use cases. Memcached does not offer support for geospatial data.  
 Redis is a feature-rich, versatile, and highly configurable in-memory data store suitable for a wide range of use cases, including those requiring geospatial data handling. Memcached, on the other hand, is a simpler, high-performance caching system that excels at basic key-value caching but lacks the advanced features and data types found in Redis.   
 
-25.AWS DataSync is an online data transfer service that simplifies, automates, and accelerates copying large amounts of data to and from AWS storage services over the internet or AWS Direct Connect.  
+25.AWS DataSync is an online "data transfer" service that simplifies, automates, and accelerates copying large amounts of data to and from AWS storage services over the internet or AWS Direct Connect.  
   
 26.AWS Storage Gateway is a hybrid cloud storage service that gives you on-premises access to virtually unlimited cloud storage. The service provides three different types of gateways – Tape Gateway, File Gateway, and Volume Gateway – that seamlessly connect on-premises applications to cloud storage, caching data locally for low-latency access. File gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.  
 
@@ -94,11 +101,11 @@ Host-Based Routing: Host-based routing is based on the hostname or domain name u
   
 31. the main pricing parameter while using the Direct Connect connection is the Data Transfer Out (DTO) from AWS to the on-premises data center. DTO refers to the cumulative network traffic that is sent through AWS Direct Connect to destinations outside of AWS. This is charged per gigabyte (GB), and unlike capacity measurements, DTO refers to the amount of data transferred, not the speed.Data transfer pricing over Direct Connect is lower than data transfer pricing over the internet  
 
-32.. A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your on-premises network and Amazon VPC over the Internet. IPsec is a protocol suite for securing IP communications by authenticating and encrypting each IP packet in a data stream.  
+32. A VPC VPN Connection utilizes IPSec to establish encrypted network connectivity between your on-premises network and Amazon VPC over the Internet. IPsec is a protocol suite for securing IP communications by authenticating and encrypting each IP packet in a data stream.  
 
-33.As AWS Direct Connect does not support encrypted network connectivity between an on-premises data center and AWS Cloud. As AWS Data Sync cannot be used to establish network connectivity between an on-premises data center and AWS Cloud  
+33.As AWS Direct Connect does not support encrypted network connectivity between an on-premises data center and AWS Cloud. As AWS Data Sync cannot be used to establish network connectivity between an on-premises data center and AWS Cloud.    
 
-32. An S3 Glacier vault is a container for storing archives. When you create a vault, you specify a vault name and the AWS Region in which you want to create the vault. S3 Glacier Vault Lock allows you to easily deploy and enforce compliance controls for individual S3 Glacier vaults with a vault lock policy. You can specify controls such as “write once read many” (WORM) in a vault lock policy and lock the policy from future edits. Therefore, this is the correct option.
+32. An S3 Glacier vault is a container for storing archives. When you create a vault, you specify a vault name and the AWS Region in which you want to create the vault. S3 Glacier Vault Lock allows you to easily deploy and enforce compliance controls for individual S3 Glacier vaults with a vault lock policy. You can specify controls such as “write once read many” (WORM) in a vault lock policy and lock the policy from future edits.
 
 33.Using Amazon CloudWatch alarm actions, you can create alarms that automatically stop, terminate, reboot, or recover your EC2 instances. You can use the stop or terminate actions to help you save money when you no longer need an instance to be running. You can use the reboot and recover actions to automatically reboot those instances or recover them onto new hardware if a system impairment occurs.  
 You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically reboots the instance. The reboot alarm action is recommended for Instance Health Check failures (as opposed to the recover alarm action, which is suited for System Health Check failures).  
@@ -130,9 +137,10 @@ Use WAF IP set statement that specifies the IP addresses that you want to allow 
 
 39.DocumentDB - Amazon DocumentDB is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads. As a document database, Amazon DocumentDB makes it easy to store, query, and index JSON data. DocumentDB is not an in-memory database  
 
-40.DAX does not support SQL query caching.  
+40.DAX does not support SQL query caching.SQL query caching refers to the process of storing the results of a database query in a cache memory or storage for later reuse.  
 
-41.Both ElastiCache for Redis and ElastiCache for Memcached are HIPAA Eligible.  
+41.Both Amazon ElastiCache for Redis and ElastiCache for Memcached are HIPAA Eligible.  
+ HIPAA is a U.S. federal law that establishes privacy and security standards for protecting the confidentiality and integrity of healthcare-related information, known as Protected Health Information (PHI).  
 
 42.Amazon Redshift is a fully-managed petabyte-scale cloud-based data warehouse product designed for large scale data set storage and analysis.  
 Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables.  
@@ -144,7 +152,7 @@ Amazon Redshift Spectrum resides on dedicated Amazon Redshift servers that are i
 
 45. AWS Security Hub gives you a comprehensive view of your high-priority security alerts and security posture across your AWS accounts. With Security Hub, you have a single place that aggregates, organizes, and prioritizes your security alerts, or findings, from multiple AWS services, such as Amazon GuardDuty, Amazon Inspector, Amazon Macie, AWS Identity and Access Management (IAM) Access Analyzer, and AWS Firewall Manager, as well as from AWS Partner solutions.  
 
-46. AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organization. You cannot use Firewall Manager to prevent SQL injection and cross-site scripting attacks. So this option is incorrect.  
+46. AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organization. You cannot use Firewall Manager to prevent SQL injection and cross-site scripting attacks. 
 
 47.The following URL paths can be used to get the instance meta data and user data from within the instance: http://169.254.169.254/latest/meta-data/  
 http://169.254.169.254/latest/user-data/  
@@ -153,6 +161,6 @@ Further, you can get the instance public IP via the URL - http://169.254.169.254
 48.Aurora: You can quickly create clones of an Aurora DB by using the database cloning feature. In addition, database cloning uses a copy-on-write protocol, in which data is copied only at the time the data changes, either on the source database or the clone database. Cloning is much faster than a manual snapshot of the DB cluster.  
 You cannot clone databases across AWS regions. The clone databases must be created in the same region as the source databases. Currently, you are limited to 15 clones based on a copy, including clones based on other clones. After that, only copies can be created. However, each copy can also have up to 15 clones.
 
-49.After a successful write of a new object or an overwrite of an existing object, any subsequent read request immediately receives the latest version of the object.  
+49.After a successful write of a new object or an overwrite of an existing object, any subsequent read request immediately receives the latest version of the object.  S3  
 
 50.All DynamoDB tables are encrypted. There is no option to enable or disable encryption for new or existing tables. By default, all tables are encrypted under an AWS owned customer master key (CMK) in the DynamoDB service account. However, you can select an option to encrypt some or all of your tables under a customer-managed CMK or the AWS managed CMK for DynamoDB in your account.  
