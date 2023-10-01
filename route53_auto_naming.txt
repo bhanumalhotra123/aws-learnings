@@ -1,0 +1,10 @@
+ Route 53 Auto Naming allows you to associate friendly service names with the IP addresses or DNS names of your services within your AWS infrastructure. 
+This association makes it easier to manage service discovery because you can use the friendly service name instead of relying on static IP addresses. 
+Even if the IP addresses of your services change, the friendly service names can remain the same, ensuring that other services or applications can find and connect to your services without being impacted by IP address changes.
+
+In essence, Route 53 Auto Naming provides a dynamic and automated way to manage service discovery, allowing you to use meaningful names to refer to your services rather than dealing with the complexity of tracking and updating IP addresses.
+
+
+
+
+
