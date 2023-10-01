@@ -8,3 +8,49 @@ In essence, Route 53 Auto Naming provides a dynamic and automated way to manage 
 
 
 
+Setting up Route 53 Auto Naming for an Amazon Elastic Kubernetes Service (Amazon EKS) cluster involves several steps. Here's a concise outline of how to do it:
+
+Create an EKS Cluster:
+
+Set up your Amazon EKS cluster and ensure your Kubernetes nodes are running. You can use the AWS Management Console or the AWS CLI to create the cluster.
+Deploy Services:
+
+Deploy your Kubernetes services (e.g., Deployments, Services) in your EKS cluster. These are the services you want to make discoverable.
+Install ExternalDNS:
+
+Install and configure an external DNS controller like ExternalDNS as a Kubernetes resource in your cluster. You can use tools like Helm to make this process easier.
+AWS IAM Permissions:
+
+Ensure that the IAM role associated with your EKS nodes has the necessary permissions to update Route 53 records. You can attach an IAM policy to the role that grants permissions for Route 53 actions.
+Configure ExternalDNS:
+
+Create a Kubernetes ConfigMap to configure ExternalDNS with the necessary parameters, including specifying the AWS Route 53 hosted zone to update.
+Service Annotations:
+
+In your Kubernetes service definitions, use annotations to specify the desired DNS names and targets for the services. ExternalDNS will use these annotations to create DNS records in Route 53.
+Apply Resources:
+
+Apply the ExternalDNS configuration, the service annotations, and any other required resources to your Kubernetes cluster using kubectl apply.
+Service Discovery:
+
+Once configured, ExternalDNS will periodically synchronize the annotations in your services with Route 53. DNS records will be created or updated based on the annotations, making your services discoverable via friendly DNS names.
+DNS Resolution:
+
+Other services or applications can now use these DNS names to discover and communicate with your EKS cluster services. They can access your services using the DNS names specified in the annotations.  
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  annotations:
+    # ExternalDNS annotation to specify the desired DNS name
+    external-dns.alpha.kubernetes.io/hostname: my-service.example.com
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
