@@ -24,8 +24,16 @@ File Gateway: AWS File Gateway enables seamless access to Amazon S3 objects as f
 Volume Gateway: AWS Volume Gateway offers block-based storage for applications using iSCSI, with two modes: Cached Volumes for primary data storage and Stored Volumes for full data snapshots and backups.    
 Tape Gateway: AWS Tape Gateway emulates a virtual tape library (VTL), allowing on-premises applications to archive data to Amazon S3 and Amazon Glacier as if they were using physical tape backups.  
 
-AWS DataSync supports only NFS and SMB file types  
+The two primary AWS storage services that AWS Storage Gateway is used to communicate with are Amazon S3 (Simple Storage Service) and Amazon EBS (Elastic Block Store). These services are commonly integrated with Storage Gateway to facilitate data storage, backup, and retrieval between on-premises environments and AWS cloud resources.  
   
+AWS DataSync supports only NFS and SMB file types  
+When using AWS DataSync to transfer data from on-premises sources, you generally need to ensure that your on-premises storage systems are accessible using the NFS or SMB protocols. AWS DataSync is designed to work with NFS and SMB sources, allowing you to transfer data from these sources to various AWS storage services, including:
+  
+Amazon S3 (Simple Storage Service)
+Amazon EBS (Elastic Block Store)
+Amazon EFS (Elastic File System)
+AWS FSx (Amazon FSx for Windows File Server or Amazon FSx for Lustre)
+    
 8.Field-level encryption allows you to enable your users to securely upload sensitive information to your web servers. The sensitive information provided by your users is encrypted at the edge, close to the user, and remains encrypted throughout your entire application stack. This encryption ensures that only applications that need the data—and have the credentials to decrypt it—are able to do so.
   
 To use field-level encryption, when you configure your CloudFront distribution, specify the set of fields in POST requests that you want to be encrypted, and the public key to use to encrypt them. You can encrypt up to 10 data fields in a request. (You can’t encrypt all of the data in a request with field-level encryption; you must specify individual fields to encrypt.)  
@@ -107,8 +115,12 @@ Global tables are primarily used to provide fast, local read and write performan
   
 11.AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain account activity related to actions across your AWS infrastructure. CloudTrail provides event history of your AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command-line tools, and other AWS services.
   
-In general, to analyze any API calls made within an AWS account, CloudTrail is used. You can record the actions that are taken by users, roles, or AWS services on Amazon S3 resources and maintain log records for auditing and compliance purposes. To do this, you can use server access logging, AWS CloudTrail logging, or a combination of both. AWS recommends that you use AWS CloudTrail for logging bucket and object-level actions for your Amazon S3 resources.
-
+In general, to analyze any API calls made within an AWS account, CloudTrail is used. You can record the actions that are taken by "users, roles, or AWS services" on Amazon S3 resources and maintain log records for auditing and compliance purposes. To do this, you can use server access logging, AWS CloudTrail logging, or a combination of both. AWS recommends that you use AWS CloudTrail for logging bucket and object-level actions for your Amazon S3 resources.
+  
+Scope: Server Access Logging is specific to certain AWS services (e.g., S3 and CloudFront) and focuses on access to data or content. In contrast, CloudTrail covers a broad range of AWS services and tracks API-level actions across your AWS account.  
+Data Captured: Server Access Logging captures information related to access requests made to data or content stored in AWS. CloudTrail captures API-level actions, including management and configuration changes, made to AWS resources and services.  
+Retention: Both services offer configurable retention periods, but CloudTrail provides the option to store logs indefinitely using CloudTrail Event History.  
+  
 12.Elastic IPs do not need to be assigned to EC2 instances while using an Application Load Balancer.  
 https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html  
 
@@ -147,8 +159,10 @@ When you create an AWS Elastic Beanstalk environment, you can specify an Amazon 
 
 26. DynamoDB Streams is a powerful service that you can combine with other AWS services to solve many problems. When enabled, DynamoDB Streams captures a time-ordered sequence of item-level modifications in a DynamoDB table and durably stores the information for up to 24 hours. Applications can access a series of stream records, which contain an item change, from a DynamoDB stream in near real-time.  
 
-27.A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network.  
+27.A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network. 
+  
 Endpoints are virtual devices. They are horizontally scaled, redundant, and highly available VPC components. They allow communication between instances in your VPC and services without imposing availability risks or bandwidth constraints on your network traffic.  
+  
 There are two types of VPC endpoints: Interface Endpoints and Gateway Endpoints. An Interface Endpoint is an Elastic Network Interface with a private IP address from the IP address range of your subnet that serves as an entry point for traffic destined to a supported service.  
 A Gateway Endpoint is a gateway that you specify as a target for a route in your route table for traffic destined to a supported AWS service. The following AWS services are supported: Amazon S3 and DynamoDB.  
 You can use two types of VPC endpoints to access Amazon S3: gateway endpoints and interface endpoints. A gateway endpoint is a gateway that you specify in your route table to access Amazon S3 from your VPC over the AWS network. Interface endpoints extend the functionality of gateway endpoints by using private IP addresses to route requests to Amazon S3 from within your VPC, on premises, or from a VPC in another AWS Region using VPC peering or AWS Transit Gateway.
@@ -282,8 +296,7 @@ Enhanced Bandwidth: It enhances inter-VPC communication bandwidth, reaching burs
 Transparent Cost Model: With Transit Gateway, user costs follow a straightforward per-hour, per-GB transferred model.  
 Reduced Latency: By removing EC2 proxies and VPN encapsulation, Transit Gateway decreases latency.    
 
-49.In DynamoDB, a similar thing can happen. Data is divided into partitions based on a primary key. If lots of requests go to the same partition quickly (like everyone trying to access the same type of data), that partition can get "hot" and slow down because it's handling too much traffic.  
+49.In DynamoDB, Data is divided into partitions based on a primary key. If lots of requests go to the same partition quickly (like everyone trying to access the same type of data), that partition can get "hot" and slow down because it's handling too much traffic.  
 
 50.An Egress-Only Internet Gateway is a horizontally scaled, redundant, and highly available VPC component that allows outbound communication over IPv6 from instances in your VPC to the Internet, and prevents the Internet from initiating an IPv6 connection with your instances. Egress-Only Internet Gateway cannot be used to connect on-premises data centers to AWS Cloud.  
-
-51.
+  
