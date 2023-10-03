@@ -53,7 +53,8 @@ With SSE-C, users manage encryption keys, but Amazon S3 handles the encryption a
   
 18.Depending on your Region, your Amazon S3 website endpoints follow one of these two formats.  
  http://bucket-name.s3-website.Region.amazonaws.com  
- http://bucket-name.s3-website-Region.amazonaws.com
+ http://bucket-name.s3-website-Region.amazonaws.com  
+the correct format depends on the AWS Region where your S3 bucket is hosted.  
 
 19. AWS WAF can be deployed on Amazon CloudFront, the Application Load Balancer (ALB), and Amazon API Gateway. It cannot be configured directly on an EC2 instance.  
 
