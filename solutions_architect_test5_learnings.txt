@@ -75,9 +75,13 @@ By default, the root volume for an AMI backed by Amazon EBS is deleted when the 
 Use Amazon ElastiCache for Memcached - Both Redis and MemCached are in-memory, open-source data stores. Memcached, a high-performance distributed memory cache service, is designed for simplicity while Redis offers a rich set of features that make it effective for a wide range of use cases. Memcached does not offer support for geospatial data.  
 Redis is a feature-rich, versatile, and highly configurable in-memory data store suitable for a wide range of use cases, including those requiring geospatial data handling. Memcached, on the other hand, is a simpler, high-performance caching system that excels at basic key-value caching but lacks the advanced features and data types found in Redis.   
 
-25.AWS DataSync is an online "data transfer" service that simplifies, automates, and accelerates copying large amounts of data to and from AWS storage services over the internet or AWS Direct Connect.  
+25. AWS DataSync is an online "data transfer" service that simplifies, automates, and accelerates copying large amounts of data to and from AWS storage services over the internet or AWS Direct Connect.  
   
 26.AWS Storage Gateway is a hybrid cloud storage service that gives you on-premises access to virtually unlimited cloud storage. The service provides three different types of gateways – Tape Gateway, File Gateway, and Volume Gateway – that seamlessly connect on-premises applications to cloud storage, caching data locally for low-latency access. File gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.  
+  
+Choose AWS DMS when you need to migrate and replicate databases, especially for complex database migration scenarios involving relational and non-relational databases. Choose AWS DataSync when you need to transfer and synchronize files and data between on-premises storage and AWS storage services. 
+  
+If you need to transfer data from one storage service to another within AWS, you can use AWS DataSync. AWS DataSync is a service specifically designed for transferring data between different storage services, such as Amazon S3, Amazon EFS (Elastic File System), and FSx for Windows File Server.  
 
 27.HTTP Header-Based Routing: This method involves inspecting the values of HTTP headers in incoming requests to determine how to route them. For example, you can route requests based on the User-Agent header to direct mobile users to a different backend service than desktop users. It's a flexible way to handle different types of clients or user agents.  
   
