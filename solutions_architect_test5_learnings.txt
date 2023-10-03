@@ -43,13 +43,10 @@ It is not possible to modify a launch configuration once it is created.
   
 14.Metadata, which can be included with the object, is not encrypted while being stored on Amazon S3. Therefore, AWS recommends that customers not place sensitive information in Amazon S3 metadata.  
 
-15. With Server-Side Encryption with Customer-Provided Keys (SSE-C), you manage the encryption keys and Amazon S3 manages the encryption, as it writes to disks, and decryption when you access your objects.   
- When you use server-side encryption with AWS KMS (SSE-KMS), you can specify a customer-managed CMK that you have already created. But, you never get to know the actual key here.  
-When you use Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3), each object is encrypted with a unique key. However, this option does not provide the ability to audit trail the usage of the encryption keys.  
-
- In SSE-KMS, you can choose to use either AWS-managed keys (AWS Managed CMKs) or customer-managed keys (Customer-Managed CMKs). This gives you the flexibility to either let AWS manage the encryption keys for you or use your own keys for added control and security.
-On the other hand, Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3) only uses Amazon S3-managed keys. You do not have the option to specify your own keys or manage key policies. SSE-S3 is a simpler, fully managed encryption option where Amazon S3 handles all aspects of key management on your behalf.  
+15. Amazon S3 offers three server-side encryption options: Server-Side Encryption with Customer-Provided Keys (SSE-C), Server-Side Encryption with AWS Key Management Service (SSE-KMS), and Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3).  
   
+With SSE-C, users manage encryption keys, but Amazon S3 handles the encryption and decryption process. SSE-KMS provides flexibility, allowing users to choose between AWS-managed keys for automatic key management or customer-managed keys for more control. It also offers advanced security features and auditing capabilities for key usage. In contrast, SSE-S3 is the simplest option where Amazon S3 automatically manages encryption keys, providing a hassle-free approach to encryption without key management responsibilities, but users can't specify their own keys or manage key policies.
+
 16. Amazon S3 doesn't support HTTPS access for website endpoints. If you want to use HTTPS, you can use CloudFront to serve a static website hosted on Amazon S3.  
 
 17.AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate is overkill for hosting a static single-page webpage.  
