@@ -157,4 +157,66 @@ When you cancel an active spot request, it does not terminate the associated ins
 Make sure that the name of the FIFO queue ends with the .fifo suffix  
 Make sure that the throughput for the target FIFO queue does not exceed 3,000 messages per second  
 
-42.
+42.SQS  
+Delete the existing standard queue and recreate it as a FIFO queue  
+Make sure that the name of the FIFO queue ends with the .fifo suffix  
+Make sure that the throughput for the target FIFO queue does not exceed 3,000 messages per second  
+
+43. Dead-letter queues can be used by other queues (source queues) as a target for messages that can't be processed (consumed) successfully. Dead-letter queues are useful for debugging your application or messaging system because they let you isolate problematic messages to determine why their processing doesn't succeed. You cannot use dead-letter queues to postpone the delivery of new messages to the queue for a few seconds.  
+Visibility timeout is a period during which Amazon SQS prevents other consumers from receiving and processing a given message. The default visibility timeout for a message is 30 seconds. The minimum is 0 seconds. The maximum is 12 hours. You cannot use visibility timeout to postpone the delivery of new messages to the queue for a few seconds.  
+Delay queues let you postpone the delivery of new messages to a queue for several seconds, for example, when your consumer application needs additional time to process messages. If you create a delay queue, any messages that you send to the queue remain invisible to consumers for the duration of the delay period. The default (minimum) delay for a queue is 0 seconds. The maximum is 15 minutes.  
+
+44.AWS Config is a service that enables you to assess, audit, and evaluate the configurations of your AWS resources. With Config, you can review changes in configurations and relationships between AWS resources, dive into detailed resource configuration histories, and determine your overall compliance against the configurations specified in your internal guidelines. You can use Config to answer questions such as - “What did my AWS resource look like at xyz point in time?”.  
+
+45.source and target databases engines are different, like in the case of Oracle to Amazon Aurora, Oracle to PostgreSQL, or Microsoft SQL Server to MySQL migrations. In this case, the schema structure, data types, and database code of source and target databases can be quite different, requiring a schema and code transformation before the data migration starts.  
+That makes heterogeneous migrations a two-step process. First use the AWS Schema Conversion Tool to convert the source schema and code to match that of the target database, and then use the AWS Database Migration Service to migrate data from the source database to the target database. All the required data type conversions will automatically be done by the AWS Database Migration Service during the migration. The source database can be located on your on-premises environment outside of AWS, running on an Amazon EC2 instance, or it can be an Amazon RDS database. The target can be a database in Amazon EC2 or Amazon RDS.  
+
+46.If a user or role has an IAM permission policy that grants access to an action that is either not allowed or explicitly denied by the applicable SCPs, the user or role can't perform that action  
+SCPs affect all users and roles in the member accounts, including root user of the member accounts  
+SCPs do not affect service-linked role  
+
+47.Amazon RDS Read Replicas provide enhanced performance and durability for RDS database (DB) instances. They make it easy to elastically scale out beyond the capacity constraints of a single DB instance for read-heavy database workloads. For a failover, read replicas have to be manually promoted to a standalone database instance since the process is not automatic. Hence, the RTO will be quite high  
+  
+Aurora global databases provide two failover options:  
+Managed Planned Failover: Ideal for controlled scenarios like disaster recovery testing or planned maintenance. It relocates the primary DB cluster to a secondary region, achieving an RPO of 0 (no data loss).  
+Unplanned Failover ("Detach and Promote"): Used for unforeseen outages. It involves manually initiating a cross-Region failover to a secondary DB cluster. RTO depends on task completion speed, while RPO is typically measured in seconds, depending on data replication lag at the time of failure.  
+
+48.Due to the active-active configuration of DynamoDB global tables, there is no concept of failover because the application writes to the table in its region, and then the data is replicated to keep the other regions' table in sync. DynamoDB global tables is a much costlier solution than Aurora Global Database for the given requirement.  
+
+49.Create an inbound endpoint on Route 53 Resolver and then DNS resolvers on the on-premises network can forward DNS queries to Route 53 Resolver via this endpoint  
+Create an outbound endpoint on Route 53 Resolver and then Route 53 Resolver can conditionally forward queries to resolvers on the on-premises network via this endpoint  
+
+50.Each AWS account has its own mapping of Availability Zones (e.g., us-east-1a, us-east-1b, etc.) within a region.  
+However, these Availability Zones may not correspond to the same physical locations across different AWS accounts.  
+To establish a common reference, AWS introduces AZ IDs (e.g., usw2-az2) that consistently identify the same physical location across all AWS accounts within a region.  
+When you and your colleagues refer to AZ IDs, you can ensure that you are all talking about the same data center or Availability Zone, even though the letter identifiers may vary across accounts.  
+
+51.AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to your protected web application resources. 
+You can protect the following resource types:  
+Amazon CloudFront distribution  
+Amazon API Gateway REST API  
+Application Load Balancer  
+AWS AppSync GraphQL API  
+Amazon Cognito user pool  
+
+AWS WAF also lets you control access to your content. Based on conditions that you specify, such as the IP addresses that requests originate from or the values of query strings, your protected resource responds to requests either with the requested content, with an HTTP 403 status code (Forbidden), or with a custom response.  
+If you want to allow or block web requests based on the IP addresses that the requests originate from, create one or more IP match conditions via your AWS WAF. An IP match condition lists up to 10,000 IP addresses or IP address ranges that your requests originate from.  
+
+53. configure CloudFront to send authenticated requests to Amazon S3, and configure Amazon S3 to only allow access to authenticated requests from CloudFront. CloudFront provides two ways to send authenticated requests to an Amazon S3 origin: origin access control (OAC) and origin access identity (OAI).  
+Exam Alert:  
+Please note that AWS recommends using OAC because it supports:  
+All Amazon S3 buckets in all AWS Regions, including opt-in Regions launched after December 2022  
+Amazon S3 server-side encryption with AWS KMS (SSE-KMS)  
+Dynamic requests (POST, PUT, etc.) to Amazon S3  
+OAI doesn't work for the scenarios in the preceding list, or it requires extra workarounds in those scenarios. However, you will continue to see answers enlisting OAI as the preferred option in the actual exam as it takes about 6 months/1 year for a new feature to appear in the exam.  
+
+54. If you have objects that are smaller than 1GB or if the data set is less than 1GB in size, you should consider using Amazon CloudFront's PUT/POST commands for optimal performance. The given use case has data larger than 1GB and hence S3 Transfer Acceleration is a better option.  
+
+55.While it is possible to copy an unencrypted snapshot to yield an encrypted snapshot, you cannot copy an encrypted snapshot to yield an unencrypted one. Therefore, the option - "Copying an AMI backed by an encrypted snapshot cannot result in an unencrypted target snapshot" is correct.    
+You can copy an AMI across AWS Regions  
+You can share an AMI with another AWS account  
+  
+56.- Amazon FSx for Windows File Server provides fully managed, highly reliable, and scalable file storage that is accessible over the industry-standard Server Message Block (SMB) protocol. It is built on Windows Server, delivering a wide range of administrative features such as user quotas, end-user file restore, and Microsoft Active Directory (AD) integration. It offers single-AZ and multi-AZ deployment options, fully managed backups, and encryption of data at rest and in transit. You can optimize cost and performance for your workload needs with SSD and HDD storage options; and you can scale storage and change the throughput performance of your file system at any time.
+
+With Amazon FSx, you get highly available and durable file storage starting from $0.013 per GB-month. Data deduplication enables you to optimize costs even further by removing redundant data. You can increase your file system storage and scale throughput capacity at any time, making it easy to respond to changing business needs. There are no upfront costs or licensing fees.  
+
