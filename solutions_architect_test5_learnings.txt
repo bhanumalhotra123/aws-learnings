@@ -1,8 +1,9 @@
 Test5  
 1.Amazon Transcribe is an automatic speech recognition (ASR) service that makes it easy to convert audio to text. One key feature of the service is called speaker identification.  
 Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless.  
-Amazon Athena is primarily designed for querying data stored in Amazon S3.  
+Amazon Athena is primarily designed for querying data stored in Amazon S3(primary focus).
   
+If you have structured data stored in other AWS services like Amazon Redshift, Amazon RDS, or even on-premises data sources, you can use AWS Glue to ETL (extract, transform, load) that data into a data lake on S3. Once it's in S3, Athena can query it.  
   
 3.S3 Standard-IA class is for data that is accessed less frequently but requires rapid access when needed.  
 
