@@ -46,7 +46,27 @@ Client-Side Encryption occurs on the client side, with the client responsible fo
 In order to enforce object encryption, create an S3 bucket policy that denies any S3 Put request that does not include the x-amz-server-side-encryption header. There are two possible values for the x-amz-server-side-encryption header: AES256, which tells S3 to use S3-managed keys, and aws:kms, which tells S3 to use AWS KMS–managed keys.
 
 
-9.Offloading TLS means transferring the responsibility of encrypting and decrypting Transport Layer Security (TLS) traffic from a load balancer to the backend servers, allowing them to handle the encryption and decryption processes.
+9.In AWS, for example, Application Load Balancer (ALB) supports TLS termination (offloading), whereas Network Load Balancer (NLB) is typically used for TLS pass-through, where the decryption happens on the backend servers themselves.
 
-NLB offloads TLS by passing encrypted traffic directly to backend servers, ALB performs TLS termination to handle decrypted HTTP traffic with advanced features, and Classic Load Balancer (ELB) can also perform TLS termination but is generally less favored for new deployments due to its feature limitations compared to NLB and ALB
+10.You can transfer up to 100PB per Snowmobile
 
+11.AWS recommends snowball only if you want to transfer greater than 10 TB of data between your on-premises data centers and Amazon S3.
+
+There are three main types of EBS RAIDs:
+
+RAID 0: RAID 0 stripes data across multiple volumes, but does not mirror it. This means that if one volume fails, all of the data on the RAID is lost. However, RAID 0 provides the best performance of all RAID types.
+RAID 1: RAID 1 mirrors data across multiple volumes. This means that if one volume fails, the data is still available on the other volumes. However, RAID 1 only provides half of the performance of a single volume.
+RAID 10: RAID 10 is a combination of RAID 0 and RAID 1. It stripes data across multiple volumes and then mirrors the striped data across additional volumes. This provides the best performance and reliability of all RAID types.
+
+12. An encryption context is a set of key-value pairs that contain additional contextual information about the data. When an encryption context is specified for an encryption operation, Amazon S3 must specify the same encryption context for the decryption operation. The encryption context offers another level of security for the encryption key. However, it is not useful for generating unique keys.
+
+ If you only need to ensure that each object is encrypted with a unique key, then you can use SSE-S3. There is no need to manually add encryption context to each upload.
+
+13.You can create up to five read replicas from one DB instance. For replication to operate effectively, each read replica should have the same amount of compute and storage resources as the source DB instance.  
+
+14.Running a DB instance as a Multi-AZ deployment can further reduce the impact of a maintenance event because Amazon RDS applies operating system updates by following these steps:
+Perform maintenance on the standby.
+Promote the standby to primary.
+Perform maintenance on the old primary, which becomes the new standby.
+
+ In Amazon RDS, you must manually promote a read replica to primary in the event of a failover. However, in a Multi-AZ deployment, Amazon RDS will automatically fail over to the standby DB instance if the primary DB instance fails.  
