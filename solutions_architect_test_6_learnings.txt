@@ -90,3 +90,27 @@ If the instance is already running, you can set DeleteOnTermination to False usi
 
 21.A byte-range request is a perfect way to get the beginning of a file and ensuring we remain efficient during our scan of our S3 bucket.
 S3 Select is a new Amazon S3 capability designed to pull out only the data you need from an object, which can dramatically improve the performance and reduce the cost of applications that need to access data in S3. 
+
+22.Spot instances are spare EC2 capacity that can save you up 90% off of On-Demand prices. Spot instances can be interrupted by Amazon EC2 for capacity requirements with a 2-minute notification
+Spot blocks allow you to request Amazon EC2 Spot instances for 1 to 6 hours at a time to avoid being interrupted
+
+A Spot Fleet is a set of Spot Instances and optionally On-Demand Instances that are launched to meet your target capacity
+ A Spot Fleet allows you to automatically request and manage multiple Spot instances that provide the lowest price per unit of capacity for your cluster or application, like a batch processing job, a Hadoop workflow, or an HPC grid computing job.
+
+23.To securely serve this private content by using CloudFront, you can do the following:
+Require that your users access your private content by using special CloudFront signed URLs or signed cookies.
+A signed URL includes additional information, for example, expiration date and time, that gives you more control over access to your content. 
+
+CloudFront signed cookies allow you to control who can access your content when you don't want to change your current URLs or when you want to provide access to multiple restricted files, for example, all of the files in the subscribers' area of a website.
+
+24. You can update your configuration to ensure that your user data scripts and cloud-init directives run every time you restart your instance. By default, the scripts are run, only once during the boot process while first launching the instance.
+You can pass two types of user data to Amazon EC2: shell scripts and cloud-init directives.
+By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance. Hence, no extra configuration is needed, apart from including the custom scripts in user data scripts.
+
+cloud-init is a specialized initialization system used in cloud instances to handle configuration tasks, while user data is a more general concept used to pass custom data or scripts to instances. 
+
+25.Redshift's internal storage does not have "tiers" of storage classes like Amazon S3
+Moving the data to S3 glacier will prevent us from being able to query it. Therefore, we should migrate the data to S3 Standard IA and use Athena to analyze the cold data.
+
+
+Q42.
