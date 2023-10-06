@@ -70,3 +70,23 @@ Promote the standby to primary.
 Perform maintenance on the old primary, which becomes the new standby.
 
  In Amazon RDS, you must manually promote a read replica to primary in the event of a failover. However, in a Multi-AZ deployment, Amazon RDS will automatically fail over to the standby DB instance if the primary DB instance fails.  
+
+15. You are correct that spread placement groups keep all instances separately, but they do not guarantee that the instances will be placed on separate underlying hardware.
+This is because Amazon EC2 may not have enough physical servers in a single Availability Zone to support all of the instances in a spread placement group. In this case, Amazon EC2 will place some of the instances on the same underlying hardware.
+Partition placement groups, on the other hand, guarantee that the instances will be placed on separate underlying hardware. This is because partition placement groups divide the placement group into logical partitions and ensure that no two partitions share the same underlying hardware.
+
+ you can create multiple partition placement groups in the same AZ, and you can distribute your instances across the multiple partition placement groups.
+
+16.The maximum timeout value for any AWS Lambda function is 15 minutes. When the specified timeout is reached, AWS Lambda terminates the execution of your Lambda function. 
+
+17. Kinesis Data Streams (KDS) and Kinesis Data Analytics are not suitable for long-term storage of data, unlike databases or data warehouses. Additionally, it mentions that in Kinesis Data Streams, you need to manually allocate shards for scaling the data ingestion process, which is an important consideration for users of this service. 
+
+18. If you create an AMI from an instance, the data on its instance store volumes isn't preserved and isn't present on the instance store volumes of the instances that you launch from the AMI.  
+
+19. ELB cannot distribute incoming traffic for targets deployed in different regions  
+
+20.  By default, the DeleteOnTermination attribute is set to True for the root volume and is set to False for all other volume types.
+If the instance is already running, you can set DeleteOnTermination to False using the command line.
+
+21.A byte-range request is a perfect way to get the beginning of a file and ensuring we remain efficient during our scan of our S3 bucket.
+S3 Select is a new Amazon S3 capability designed to pull out only the data you need from an object, which can dramatically improve the performance and reduce the cost of applications that need to access data in S3. 
