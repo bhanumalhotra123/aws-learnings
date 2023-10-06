@@ -1,1 +1,46 @@
 Test6
+
+1.Other AWS services, such as S3, DynamoDB, and Lambda, can assume roles. This is because they are AWS principals. EC2 instances are not AWS principals, so they cannot assume roles directly. Instead, they must use instance profiles to assume roles.
+An instance profile is a container for an IAM role. When you launch an EC2 instance with an instance profile assigned to it, the instance assumes the role and has the permissions that are defined in the role.
+Using instance profiles to grant EC2 instances access to AWS resources has several benefits, including:
+Security: Instance profiles can help to improve security by ensuring that only the permissions that are needed are granted to EC2 instances.
+Here is an example of how to grant an EC2 instance access to S3 using an instance profile:
+Create an IAM role with the permissions to access S3.
+Create an instance profile and associate it with the IAM role.
+Launch your EC2 instance with the instance profile assigned to it.
+
+2.AWS Firewall Manager is a security management service which allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations. As new applications are created, Firewall Manager makes it easy to bring new applications and resources into compliance by enforcing a common set of security rules. Now you have a single service to build firewall rules, create security policies, and enforce them in a consistent, hierarchical manner across your entire infrastructure.
+  
+Using AWS Firewall Manager, you can centrally configure AWS WAF rules, AWS Shield Advanced protection, Amazon Virtual Private Cloud (VPC) security groups, AWS Network Firewalls, and Amazon Route 53 Resolver DNS Firewall rules across accounts and resources in your organization. It does not support Network ACLs as of today.  
+
+3. For higher levels of protection against attacks targeting your applications running on Amazon Elastic Compute Cloud (EC2), Elastic Load Balancing (ELB), Amazon CloudFront, AWS Global Accelerator, and Amazon Route 53 resources, you can subscribe to AWS Shield Advanced. In addition to the network and transport layer protections that come with Standard, AWS Shield Advanced provides additional detection and mitigation against large and sophisticated DDoS attacks, near real-time visibility into attacks, and integration with AWS WAF, a web application firewall. AWS Shield Advanced also gives you 24x7 access to the AWS DDoS Response Team (DRT) and protection against DDoS-related spikes in your Amazon Elastic Compute Cloud (EC2), Elastic Load Balancing (ELB), Amazon CloudFront, AWS Global Accelerator, and Amazon Route 53 charges.
+
+4. EFS has a higher throughput than EBS. In addition, EBS can be attached to multiple EC2 instances when the underlying EBS type is io1/io2 and the instance is of Nitro type. The use-case does not provide any such details, so this option is ruled out.
+
+5. storage limit for each item in a DynamoDB table is 400 KB
+
+6. With Bursting Throughput mode, a file system's throughput scales as the amount of data stored in the standard storage class grows. File-based workloads are typically spiky, driving high levels of throughput for short periods of time, and low levels of throughput the rest of the time. To accommodate this, Amazon EFS is designed to burst to high throughput levels for periods of time. By default, AWS recommends that you run your application in the Bursting Throughput mode. But, if you're planning to migrate large amounts of data into your file system, consider switching to Provisioned Throughput mode.  
+
+7.Customer Managed Key (CMK) and Customer Master Key (CMK) are synonymous 
+Customer Master Key (CMK) is the key used to manage other keys, including DEKs.
+Data Encryption Key (DEK) is the key used to encrypt and decrypt data.  
+
+8.Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3):
+
+CMK: Amazon S3 holds the CMK, which is used for managing encryption for the objects in your S3 bucket.
+DEK: Amazon S3 generates a unique DEK for each object and holds it. It uses this DEK to encrypt and decrypt the object's data.
+
+Server-Side Encryption with AWS Key Management Service (SSE-KMS):
+
+CMK: AWS Key Management Service (KMS) holds the CMK. You can choose between AWS-managed CMKs or create your own Customer Managed CMK.
+DEK: KMS generates and manages the DEKs. Each object is encrypted with a unique DEK, and KMS holds these DEKs. KMS uses the CMK to protect and manage the DEKs.
+
+Server-Side Encryption with Customer-Provided Keys (SSE-C):
+
+CMK: In SSE-C, you (the customer) provide and manage the CMK. This is typically an external key you supply when you upload an object to S3.
+DEK: You also provide and manage the DEK. The DEK is used to encrypt and decrypt the object's data, and you are responsible for securely storing and managing it.  
+
+Server-Side Encryption (SSE) occurs on the server side, with the cloud storage service managing encryption keys.
+Client-Side Encryption occurs on the client side, with the client responsible for encryption, decryption, and key management.  
+
+In order to enforce object encryption, create an S3 bucket policy that denies any S3 Put request that does not include the x-amz-server-side-encryption header. There are two possible values for the x-amz-server-side-encryption header: AES256, which tells S3 to use S3-managed keys, and aws:kms, which tells S3 to use AWS KMS–managed keys.
