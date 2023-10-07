@@ -112,5 +112,96 @@ cloud-init is a specialized initialization system used in cloud instances to han
 25.Redshift's internal storage does not have "tiers" of storage classes like Amazon S3
 Moving the data to S3 glacier will prevent us from being able to query it. Therefore, we should migrate the data to S3 Standard IA and use Athena to analyze the cold data.
 
+26.Synchronous programming is a sequential approach, where code is executed one line at a time, in the order it is written. The program will wait for each line of code to finish executing before moving on to the next line.
 
-Q42.
+Asynchronous programming is a non-sequential approach, where code can be executed in parallel. The program does not have to wait for each line of code to finish executing before moving on to the next line.
+
+27.As the Availability Zones got unbalanced, Amazon EC2 Auto Scaling will compensate by rebalancing the Availability Zones. When rebalancing, Amazon EC2 Auto Scaling launches new instances before terminating the old ones, so that rebalancing does not compromise the performance or availability of your application  
+
+Amazon EC2 Auto Scaling creates a new scaling activity for terminating the unhealthy instance and then terminates it. Later, another scaling activity launches a new instance to replace the terminated instance
+
+Here is a more detailed explanation of the rebalancing process:
+
+Amazon EC2 Auto Scaling creates a new scaling activity for terminating the unhealthy instance.
+Amazon EC2 Auto Scaling launches a new instance to replace the terminated instance.
+Amazon EC2 Auto Scaling waits for the new instance to become healthy.
+Amazon EC2 Auto Scaling terminates the unhealthy instance.
+
+28. long polling or short polling cannot impact the priority of processing for the two queues
+
+AWS recommends using separate queues to provide prioritization of work. Therefore, for the given use case, you need to create an SQS standard queue for processing pro users' photos and another SQS standard queue for processing lite users' photos. Then you can configure EC2 instances to prioritize polling for the pro queue over the lite queue.   
+
+29.When you upgrade an RDS DB instance to a new database engine version, Amazon RDS upgrades the following components:
+
+The database engine software
+The database schema
+The database data
+
+The upgrade process involves the following steps:
+
+Amazon RDS takes a snapshot of the database instance. This snapshot is used to restore the database instance if the upgrade fails.
+Amazon RDS upgrades the database engine software.
+Amazon RDS upgrades the database schema.
+Amazon RDS upgrades the database data.
+Amazon RDS verifies that the upgrade was successful.
+
+If you are using a Multi-AZ deployment, both the primary and standby DB instances are upgraded at the same time. This means that your database will be unavailable during the entire upgrade process.  
+
+30. we have to pay for inter-Region data replication charges for the Read Replica, whereas the replication of data within a single Region is free.
+Enabling Multi-AZ helps make our database highly-available, but the standby database is not accessible and cannot be used for reads or write. It's just a database that will become primary when the other database encounters a failure.
+
+31.AWS recommends that you should use AWS DataSync to migrate existing data to Amazon S3, and subsequently use the File Gateway configuration of AWS Storage Gateway to retain access to the migrated data and for ongoing updates from your on-premises file-based applications.
+
+The Volume Gateway provides block storage to your on-premises applications using iSCSI connectivity. Data on the volumes is stored in Amazon S3 and you can take point in time copies of volumes that are stored in AWS as Amazon EBS snapshots. Volume Gateway is for block storage and not for file storage 
+
+32.AWS Managed Microsoft AD is the best choice for organizations that need a fully managed Microsoft Active Directory service in the cloud. It supports all Active Directory features, including trust relationships, Group Policy, and Kerberos SSO. This makes it easy to migrate your on-premises Active Directory to AWS or to create a new Active Directory environment in the cloud.
+
+AD Connector is the best choice for organizations that want to connect their on-premises Active Directory to AWS. This allows you to use your existing Active Directory credentials to access AWS services and applications. You can also use AD Connector to join EC2 instances to your on-premises Active Directory domain.
+
+Simple AD is the best choice for organizations that need a low-scale, low-cost directory with basic Active Directory compatibility. It supports basic Active Directory features such as user accounts, group memberships, and LDAP compatibility. Simple AD is a good choice for small businesses and organizations that are developing new applications.
+
+33. AWS Data Pipeline provides a managed orchestration service that gives you greater flexibility in terms of the execution environment, access and control over the compute resources that run your code, as well as the code itself that does data processing. AWS Data Pipeline launches compute resources in your account allowing you direct access to the Amazon EC2 instances or Amazon EMR clusters. As this option provides access to the underlying EC2 instances so it's not a serverless solution. Therefore this option is incorrect for the given use case.
+
+34.Lambda would be the perfect fit if our script could run in less than 15 minutes, as this is the maximum timeout for Lambda.
+
+35. the enableDnsHostnames and enableDnsSupport attributes must be set to true in the VPC that you want to associate with the private hosted zone in the other VPC. This is because DNS resolution is required for private hosted zones.
+Note: You can only associate VPCs within the same region with a private hosted zone.
+
+36.Multi-attach EBS volumes are supported only for Nitro EC2 instances which are Linux-based. Multi-Attach is supported exclusively on Provisioned IOPS SSD volumes.
+ EFS is not compatible with the Windows platform
+
+37.Here is an example of how you could use EMR to create the daily big data analysis job:
+
+Create an EMR cluster with the appropriate Spark version and configuration.
+Write a Spark job to read the data from S3, analyze it, and generate the customized reports.
+Submit the Spark job to the EMR cluster.
+Monitor the EMR cluster and the Spark job to ensure that it is running successfully.
+Once the job is complete, the customized reports will be saved to S3.
+You can use the Amazon EMR console, the AWS CLI, or the AWS SDK to create and manage EMR clusters and to submit Spark jobs.
+
+Here is an example of how you could use Glue to create the daily big data analysis job:
+
+Create a Glue job to read the data from S3, analyze it, and generate the customized reports.
+Schedule the Glue job to run daily.
+Glue will run the job on your behalf and save the customized reports to S3.
+
+38.between the ALB and the Elastic IP. If we use an ALB, things will still work, but we will have to pay for the provisioned ALB which sends traffic to only one EC2 instance. Instead, to minimize costs, we must use an Elastic IP.
+
+39.Temporary queues: Temporary queues are automatically deleted after a certain period of inactivity. This makes them ideal for short-lived tasks, such as processing a batch of messages from a queue and then deleting the queue.
+Dead-letter queues (DLQs): DLQs are used to store messages that fail to be processed by consumers. This can happen for a variety of reasons, such as if the consumer goes down or if the message is malformed. DLQs can be used to retry processing failed messages or to investigate the cause of the failure.
+Scheduled queues: Scheduled queues allow you to schedule messages to be delivered at a specific time in the future. This can be useful for tasks such as sending out daily email digests or processing reports at the end of the day.
+
+40.As a solutions architect, the best architecture for this requirement is to use AWS Direct Connect with a dual-redundant configuration. This means that the company will have two AWS Direct Connect connections, each of which is terminating on a different device in a different location. This will provide redundancy in the event of a failure of one of the connections or devices.
+
+41.To set up a rate-based rule in AWS WAF, you can use the AWS WAF console, the AWS CLI, or the AWS WAF API. The rule will specify the following:
+
+The type of request to block (e.g., GET, POST, etc.)
+The path of the resource to protect (e.g., /index.html)
+The rate at which requests are blocked (e.g., 100 requests per second)
+The duration for which requests are blocked (e.g., 1 minute)
+
+42. EventBridge events cannot invoke applications on EC2 instances
+Amazon S3 supports the following destinations where it can publish events:
+Amazon Simple Notification Service (Amazon SNS) topic
+Amazon Simple Queue Service (Amazon SQS) queue
+AWS Lambda
