@@ -230,3 +230,5 @@ You need to prepare a custom metric using CloudWatch Monitoring Scripts which is
 - Disk space utilization
 - Page file utilization
 - Log collection
+
+Q 46 -52
