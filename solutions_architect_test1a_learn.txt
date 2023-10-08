@@ -1,0 +1,106 @@
+Test1a
+
+1.Remember that the more distinct partition key values your workload accesses, the more those requests will be spread across the partitioned space. Conversely, the less distinct partition key values, the less evenly spread it would be across the partitioned space, which effectively slows the performance.
+
+
+Partition key design is important for DynamoDB because it determines how I/O requests are distributed across the underlying physical partitions.
+If you don't design your partition key carefully, you can create "hot" partitions that receive a lot of I/O requests. This can lead to throttling and inefficient use of your provisioned I/O capacity.
+To achieve optimal performance, you should aim to spread your I/O requests across as many distinct partition key values as possible. This will help you to use your provisioned I/O capacity more efficiently and avoid throttling.
+
+Here are some tips for designing a good partition key:
+
+Choose a partition key that is unique for each item in your table.
+Choose a partition key that is accessed frequently and evenly across your workload.
+Avoid using partition keys that have a small number of distinct values.
+If you have a large number of items in your table, consider using a composite partition key.
+
+Here are some examples of good partition key designs:
+For a table that stores user data: The partition key could be the user ID or the user email address.
+For a table that stores product data: The partition key could be the product ID or the product category.
+For a table that stores order data: The partition key could be the order ID or the customer ID.
+
+A composite partition key is a partition key that consists of two or more attributes. DynamoDB uses the values of all of the attributes in the composite partition key to determine the partition in which an item is stored.
+
+
+To create a partition key in DynamoDB, you need to specify it when you create the table. You can do this using the AWS Management Console, the AWS CLI, or the AWS SDKs.
+
+For example, to create a table with a partition key called "UserID" using the AWS Management Console, you would follow these steps:
+
+Go to the Amazon DynamoDB console.
+Click Create table.
+Enter a name for your table and select the Create checkbox.
+In the Partition key section, select Add attribute.
+Enter the name of your partition key attribute (e.g., "UserID") and select the data type.
+Click Create table.
+Once you have created the table, you cannot change the partition key. However, you can add new partition keys to the table by creating a composite partition key.
+
+2.Amazon Aurora supports the following types of endpoints:
+
+Cluster endpoint: This endpoint connects you to the primary instance and automatically follows the primary instance in case of failover, that is, when the current primary instance is demoted and one of the Aurora Replicas is promoted in its place.
+
+Reader endpoint: This endpoint includes all Aurora Replicas in the DB cluster under a single DNS CNAME. You can use the reader endpoint to implement DNS-based random assignment of instance IP addresses to new read-only connections. This can improve read scalability and high availability for your query-intensive applications.
+
+Instance endpoint: Each instance in the DB cluster has its own individual endpoint. You can use instance endpoints to connect to specific instances in your DB cluster, such as for maintenance or troubleshooting.
+
+For example, the primary instance handles all data definition language (DDL) and data manipulation language (DML) statements. Up to 15 Aurora Replicas handle read-only query traffic.
+
+Although it is true that a reader endpoint enables your Aurora database to automatically perform load-balancing among all the Aurora Replicas, it is quite limited to doing read operations only. You still need to use a custom endpoint to load-balance the database connections based on the specified criteria.
+
+
+A custom endpoint is a type of endpoint that allows you to connect to a subset of the Aurora instances in your DB cluster. You can use custom endpoints to distribute traffic across different groups of Aurora instances, or to isolate certain types of traffic from other types of traffic.
+For example, you could create a custom endpoint for your read-only traffic and a custom endpoint for your write-only traffic. This would allow you to scale your read traffic independently of your write traffic.
+
+3.When you create a CMK in KMS, you can choose to have AWS manage the key material for you, or you can import your own key material. If you choose to have AWS manage the key material, AWS will generate and store the key material in the AWS KMS default key store, which is protected by FIPS 140-2 validated cryptographic modules.
+If you choose to import your own key material, you must generate the key material in a secure environment and then import it into KMS using the ImportKeyMaterial operation.
+
+AWS managed customer managed keys (CMKs) are not saved in Cloud HSM by default. AWS managed CMKs are generated and stored in the AWS KMS default key store, which is protected by FIPS 140-2 validated cryptographic modules.
+You can only store customer managed CMKs in Cloud HSM by creating a custom key store in KMS that is backed by Cloud HSM. Then, when you create a CMK in KMS, you can specify the custom key store. KMS will then generate the key material for the CMK in Cloud HSM and back it up with Cloud HSM.
+
+The AWS Key Management Service (KMS) custom key store feature combines the controls provided by AWS CloudHSM with the integration and ease of use of AWS KMS. You can configure your own CloudHSM cluster and authorize AWS KMS to use it as a dedicated key store for your keys rather than the default AWS KMS key store. When you create keys in AWS KMS you can choose to generate the key material in your CloudHSM cluster. CMKs that are generated in your custom key store never leave the HSMs in the CloudHSM cluster in plaintext and all AWS KMS operations that use those keys are only performed in your HSMs.
+Cloud HSM is a hardware security module (HSM) that provides a secure way to store and manage your cryptographic keys.
+
+4.API Gateway will automatically scale and handle massive traffic spikes so you do not have to do anything is incorrect. Although it can scale using AWS Edge locations, you still need to configure the throttling to further manage the bursts of your APIs.
+Amazon API Gateway provides throttling at multiple levels including global and by a service call. Throttling limits can be set for standard rates and bursts. For example, API owners can set a rate limit of 1,000 requests per second for a specific method in their REST APIs, and also configure Amazon API Gateway to handle a burst of 2,000 requests per second for a few seconds.
+
+5.AWS WAF is a web application firewall that lets you monitor the HTTP(S) requests that are forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, or an AWS AppSync GraphQL API.
+
+-Web ACLs – You use a web access control list (ACL) to protect a set of AWS resources. You create a web ACL and define its protection strategy by adding rules. Rules define criteria for inspecting web requests and specify how to handle requests that match the criteria. You set a default action for the web ACL that indicates whether to block or allow through those requests that pass the rules inspections.
+
+-Rules – Each rule contains a statement that defines the inspection criteria and an action to take if a web request meets the criteria. When a web request meets the criteria, that's a match. You can configure rules to block matching requests, allow them through, count them, or run CAPTCHA controls against them.
+
+-Rules groups – You can use rules individually or in reusable rule groups. AWS Managed Rules and AWS Marketplace sellers provide managed rule groups for your use. You can also define your own rule groups.
+
+AWSManagedRulesSQLiRuleSet - The SQL database rule group contains rules to block request patterns associated with the exploitation of SQL databases, like SQL injection attacks. This can help prevent remote injection of unauthorized queries. Evaluate this rule group for use if your application interfaces with an SQL database.
+
+There is no additional software to deploy, DNS configuration, SSL/TLS certificate to manage, or need for a reverse proxy setup.
+With AWS Firewall Manager integration, you can centrally define and manage your rules and reuse them across all the web applications that you need to protect.
+
+6.AWS Network Firewall is a managed service that is primarily used to deploy essential network protections for all of your Amazon Virtual Private Clouds (VPCs) and not particularly to your Application Load Balancers. Take note that the AWS Network Firewall is account-specific by default and needs to be integrated with the AWS Firewall Manager to easily share the firewall across your other AWS accounts. In addition, refactoring the web application will require an immense amount of time.
+
+7.An S3 access endpoint is a type of VPC endpoint that allows you to access Amazon S3 from your VPC without requiring an internet gateway or NAT device for your VPC. This can help to improve security and performance by keeping your traffic within the AWS network.
+
+To create an S3 access endpoint, you must first create a route table and associate it with your VPC. Then, you can create the S3 access endpoint and associate it with your route table. Finally, you must update your route table to send traffic to the S3 access endpoint.
+
+Gateway endpoint: A gateway endpoint is a gateway that you specify in your route table to access Amazon S3 from your VPC over the AWS network. Gateway endpoints are available at no additional cost.
+Interface endpoint: An interface endpoint extends the functionality of gateway endpoints by using private IP addresses to route requests to Amazon S3 from within your VPC, on premises, or from a VPC in another AWS Region by using VPC peering or AWS Transit Gateway. Interface endpoints are available for an additional cost.
+
+An S3 access endpoint is a type of gateway endpoint. It is a gateway that you specify in your route table to access Amazon S3 from your VPC over the AWS network. Gateway endpoints are available at no additional cost.
+
+Interface endpoints are a different type of VPC endpoint that uses private IP addresses to route requests to Amazon S3 from within your VPC, on premises, or from a VPC in another AWS Region. Interface endpoints are available for an additional cost.
+
+8.Using Amazon CloudWatch to monitor the CPU Utilization of your database is incorrect. Although you can use this to monitor the CPU Utilization of your database instance, it does not provide the percentage of the CPU bandwidth and total memory consumed by each database process in your RDS instance. Take note that CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance while RDS Enhanced Monitoring gathers its metrics from an agent on the instance.
+9.The default termination policy is designed to help ensure that your network architecture spans Availability Zones evenly. With the default termination policy, the behavior of the Auto Scaling group is as follows:
+
+ If there are instances in multiple Availability Zones, choose the Availability Zone with the most instances and at least one instance that is not protected from scale in. If there is more than one Availability Zone with this number of instances, choose the Availability Zone with the instances that use the oldest launch configuration.
+
+ Determine which unprotected instances in the selected Availability Zone use the oldest launch configuration. If there is one such instance, terminate it.
+
+ If there are multiple instances to terminate based on the above criteria, determine which unprotected instances are closest to the next billing hour. (This helps you maximize the use of your EC2 instances and manage your Amazon EC2 usage costs.) If there is one such instance, terminate it.
+
+ If there is more than one unprotected instance closest to the next billing hour, choose one of these instances at random.
+
+10.Amazon DynamoDB is integrated with AWS Lambda so that you can create triggers—pieces of code that automatically respond to events in DynamoDB Streams. With triggers, you can build applications that react to data modifications in DynamoDB tables.
+
+11.To require that users enter a password on a password-protected Redis server, include the parameter --auth-token with the correct password when you create your replication group or cluster and on all subsequent commands to the replication group or cluster.  
+
+12.
