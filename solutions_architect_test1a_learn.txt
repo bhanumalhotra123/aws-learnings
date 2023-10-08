@@ -103,4 +103,82 @@ Interface endpoints are a different type of VPC endpoint that uses private IP ad
 
 11.To require that users enter a password on a password-protected Redis server, include the parameter --auth-token with the correct password when you create your replication group or cluster and on all subsequent commands to the replication group or cluster.  
 
-12.
+12.Amazon Macie generates two categories of findings: policy findings and sensitive data findings. A policy finding is a detailed report of a potential policy violation or issue with the security or privacy of an Amazon S3 bucket. Macie generates these findings as part of its ongoing monitoring activities for your Amazon S3 data. A sensitive data finding is a detailed report of sensitive data in an S3 object. Macie generates these findings when it discovers sensitive data in S3 objects that you configure a sensitive data discovery job to analyze.
+
+13.Amazon Polly is simply a service that turns text into lifelike speech, allowing you to create applications that talk, and build entirely new categories of speech-enabled products. Polly can't be used to scane usage patterns on your S3 data.
+
+14. Amazon Kendra is just an enterprise search service that allows developers to add search capabilities to their applications. This enables their end users to discover information stored within the vast amount of content spread across their company
+
+15. Amazon Fraud Detector is only a fully managed service for identifying potentially fraudulent activities and for catching more online fraud faster.
+
+16.By using AWS Secret Manager with a new AWS KMS key, you can add an extra layer of security to your EKS cluster's etcd key-value store. To do this, you need to create a new KMS key in the AWS KMS console, then create a new secret in the AWS Secret Manager console, specifying the new KMS key as the encryption key. Finally, you can configure your EKS cluster to use the new secret by creating a Kubernetes secret object that references the AWS Secret Manager secret.
+
+17.Refactor the application to .NET Core and run it as a serverless container service using Amazon Elastic Kubernetes Service (Amazon EKS) with AWS Fargate is incorrect. This will take significant changes to the application as you will refactor, or do a code change to, the codebase in order for it to become a serverless container application. Remember that the scenario explicitly mentioned that the migration process should minimize development changes. A better solution is to rehost the on-premises .NET application to an AWS Elastic Beanstalk Multi-AZ environment, which doesn't require any code changes.
+
+18.AWS Elastic Beanstalk reduces management complexity without restricting choice or control. You simply upload your application, and Elastic Beanstalk automatically handles the details of capacity provisioning, load balancing, scaling, and application health monitoring. Elastic Beanstalk supports applications developed in Go, Java, .NET, Node.js, PHP, Python, and Ruby. When you deploy your application, Elastic Beanstalk builds the selected supported platform version and provisions one or more AWS resources, such as Amazon EC2 instances, to run your application.
+
+19.you can assign an IAM Role to the users or groups from your Active Directory once it is integrated with your VPC via the AWS Directory Service AD Connector.
+
+20.Amazon FSx For Windows File Server does not have a parallel file system, unlike Lustre.
+
+21.If you want to serve private content through CloudFront and you're trying to decide whether to use signed URLs or signed cookies, consider the following:
+
+Use signed URLs for the following cases:
+- You want to use an RTMP distribution. Signed cookies aren't supported for RTMP distributions.
+- You want to restrict access to individual files, for example, an installation download for your application.
+- Your users are using a client (for example, a custom HTTP client) that doesn't support cookies.
+Use signed cookies for the following cases:
+- You want to provide access to multiple restricted files, for example, all of the files for a video in HLS format or all of the files in the subscribers' area of a website.
+- You don't want to change your current URLs.
+
+22.This is how client-side encryption using client-side master key works:
+When uploading an object - You provide a client-side master key to the Amazon S3 encryption client. The client uses the master key only to encrypt the data encryption key that it generates randomly. The process works like this:
+
+1. The Amazon S3 encryption client generates a one-time-use symmetric key (also known as a data encryption key or data key) locally. It uses the data key to encrypt the data of a single Amazon S3 object. The client generates a separate data key for each object.
+
+2. The client encrypts the data encryption key using the master key that you provide. The client uploads the encrypted data key and its material description as part of the object metadata. The client uses the material description to determine which client-side master key to use for decryption.
+
+3. The client uploads the encrypted data to Amazon S3 and saves the encrypted data key as object metadata (x-amz-meta-x-amz-key) in Amazon S3.
+
+When downloading an object - The client downloads the encrypted object from Amazon S3. Using the material description from the object's metadata, the client determines which master key to use to decrypt the data key. The client uses that master key to decrypt the data key and then uses the data key to decrypt the object.
+
+23.Versioning in S3 helps with mistakenly deleted objects by keeping a history of all changes to an object. This includes both updates to the object's content and deletions of the object. When versioning is enabled for a bucket, S3 creates a new version of an object whenever it is updated or deleted.
+If you mistakenly delete an object from a versioned bucket, you can restore the object from a previous version. To do this, you can use the AWS Management Console, the AWS CLI, or the AWS SDKs.
+
+24.AWS Central Tower service is primarily used to manage and govern multiple AWS accounts and not just S3 buckets. Using the AWS Lake Formation service is a more suitable choice.
+AWS Lake Formation is a service that makes it easy to set up a secure data lake in days. A data lake is a centralized, curated, and secured repository that stores all your data, both in its original form and prepared for analysis. A data lake enables you to break down data silos and combine different types of analytics to gain insights and guide better business decisions.
+
+26.Amazon S3 forms the storage layer for Lake Formation. If you already use S3, you typically begin by registering existing S3 buckets that contain your data. Lake Formation creates new buckets for the data lake and import data into them. AWS always stores this data in your account, and only you have direct access to it.
+
+AWS Lake Formation is integrated with AWS Glue which you can use to create a data catalog that describes available datasets and their appropriate business applications. Lake Formation lets you define policies and control data access with simple “grant and revoke permissions to data” sets at granular levels. You can assign permissions to IAM users, roles, groups, and Active Directory users using federation. You specify permissions on catalog objects (like tables and columns) rather than on buckets and objects.
+
+27.The visibility timeout is the amount of time that a message is hidden from other consumers after it is received. If a consumer does not finish processing a message before the visibility timeout expires, the message will be made visible to other consumers.
+
+This ensures that messages are not lost, even if a consumer fails. However, it also means that messages can be processed multiple times if they are not deleted after they are processed.
+
+28.AWS Artifact is a great resource for compliance-related information. It provides on-demand access to a variety of AWS security and compliance reports, as well as select online agreements. This can be very helpful for organizations that need to demonstrate their compliance with various regulations and standards.
+All AWS Accounts have access to AWS Artifact. Root users and IAM users with admin permissions can download all audit artifacts available to their accounts by agreeing to the associated terms and conditions. You will need to grant IAM users with non-admin permissions access to AWS Artifact using IAM permissions. This allows you to grant a user access to AWS Artifact while restricting access to other services and resources within your AWS Account.
+
+29.Lambda@Edge lets you run Lambda functions to customize the content that CloudFront delivers, executing the functions in AWS locations closer to the viewer. The functions run in response to CloudFront events, without provisioning or managing servers. You can use Lambda functions to change CloudFront requests and responses at the following points:
+- After CloudFront receives a request from a viewer (viewer request)
+- Before CloudFront forwards the request to the origin (origin request)
+- After CloudFront receives the response from the origin (origin response)
+- Before CloudFront forwards the response to the viewer (viewer response)
+
+30.Since the company is using Microsoft Active Directory which implements Security Assertion Markup Language (SAML), you can set up a SAML-Based Federation for API Access to your AWS cloud. In this way, you can easily connect to AWS using the login credentials of your on-premises network.
+
+Microsoft Active Directory (AD) is a directory service that stores information about users, computers, and other resources in a network domain. AD provides a central location for managing user identities, permissions, and other resources.
+
+Security Assertion Markup Language (SAML) is an open standard for exchanging authentication and authorization data between security systems. SAML can be used to implement federated single sign-on (SSO), which allows users to log in to multiple applications using a single set of credentials.
+
+SAML-based federation for API access to AWS allows you to use your Microsoft AD credentials to access AWS APIs. This can be useful for organizations that want to centralize user management and authentication.
+
+To set up SAML-based federation for API access to AWS, you will need to:
+
+Configure your Microsoft AD environment to trust AWS.
+Configure AWS to trust your Microsoft AD environment.
+Create a SAML identity provider in AWS.
+Create IAM roles and policies for users who will use SAML to access your AWS resources.
+Test your SAML federation configuration.
+
+30.AWS Transfer for SFTP is a fully managed service that enables you to securely transfer files between your on-premises servers and Amazon S3 using the Secure File Transfer Protocol (SFTP).
