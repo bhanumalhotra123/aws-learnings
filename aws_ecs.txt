@@ -1,0 +1,33 @@
+A container management service to run, stop and manage Docker containers on a cluster.
+ECS can be used to create a consistent deployment and build experience, manage, and scale batch and Extract-Transform-Load (ETL) workloads, and build sophisticated application architectures on a microservices model.
+Amazon ECS is a regional service.
+
+You can create ECS clusters within a new or existing VPC.
+After a cluster is up and running, you can define task definitions and services that specify which Docker container images to run across your clusters.
+
+AWS Compute SLA guarantees a Monthly Uptime Percentage of at least 99.99% for Amazon ECS.
+Amazon ECS Exec is a way for customers to execute commands in a container running on Amazon EC2 instances or AWS Fargate. ECS Exec gives you interactive shell or single command access to a running container.
+
+Components
+__________
+
+Containers and Images
+
+Your application components must be architected to run in containers ー containing everything that your software application needs to run: code, runtime, system tools, system libraries, etc.
+Containers are created from a read-only template called an image.
+Images are typically built from a Dockerfile, a plain text file that specifies all of the components that are included in the container. These images are then stored in a registry from which they can be downloaded and run on your cluster.
+When you launch a container instance, you have the option of passing user data to the instance. The data can be used to perform common automated configuration tasks and even run scripts when the instance boots.
+Docker Volumes can be a local instance store volume, EBS volume, or EFS volume. Connect your Docker containers to these volumes using Docker drivers and plugins.
+
+
+Task Components
+
+Task definitions specify various parameters for your application. It is a text file, in JSON format, that describes one or more containers, up to a maximum of ten, that form your application.
+Task definitions are split into separate parts:
+Task family – the name of the task, and each family can have multiple revisions.
+IAM task role – specifies the permissions that containers in the task should have.
+Network mode – determines how the networking is configured for your containers.
+Container definitions – specify which image to use, how much CPU and memory the container is allocated, and many more options.
+Volumes – allow you to share data between containers and even persist the data on the container instance when the containers are no longer running.
+Task placement constraints – lets you customize how your tasks are placed within the infrastructure.
+Launch types – determines which infrastructure your tasks use.
