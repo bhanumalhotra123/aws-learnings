@@ -137,3 +137,41 @@ If you stop an instance, modify its user data, and start the instance, the updat
 Retrieve user data from within a running instance at http://169.254.169.254/latest/user-data
 An instance tag can be accessed from the instance metadata.
 When using Auto Scaling groups, the instance metadata contains information about an instance’s target lifecycle state.
+
+
+Amazon EC2 Networking
+An Elastic IP address is a static IPv4 address designed for dynamic cloud computing. With it, you can mask the failure of an instance or software by rapidly remapping the address to another instance in your account.
+If you have not enabled auto-assign public IP address for your instance, you need to associate an Elastic IP address with your instance to enable communication with the internet.
+An Elastic IP address is for use in a specific region only.
+By default, all AWS accounts are limited to five (5) Elastic IP addresses per region, because public (IPv4) internet addresses are a scarce public resource.
+You can transfer Elastic IP addresses from one AWS account to another.
+
+By default EC2 instances come only with a private IP when created in a private subnet, and public and private IP when created in a public subnet.
+
+An elastic network interface is a logical networking component in a VPC that represents a virtual network card, which directs traffic to your instance
+Every instance in a VPC has a default network interface, called the primary network interface (eth0). You cannot detach a primary network interface from an instance.
+You can create and attach additional network interfaces. The maximum number of network interfaces that you can use varies by instance type.
+You can attach a network interface to an instance in a different subnet as long as its within the same AZ
+Default interfaces are terminated with instance termination.
+
+Scale with EC2 Scaling Groups and distribute traffic among instances using Elastic Load Balancer.
+You can configure EC2 instances as bastion hosts (aka jump boxes) in order to access your VPC instances for management, using SSH or RDP protocols
+
+Enhanced Networking – It provides higher bandwidth, higher packet per second (PPS) performance, and consistent lower inter-instance latencies, which are being used in Placement Groups. It uses single root I/O virtualization (SR-IOV) to provide high-performance networking capabilities. SR-IOV is a method of device virtualization that provides higher I/O performance and lower CPU utilization when compared to traditional virtualized network interfaces.
+
+Elastic Fabric Adapter (EFA) – This is a network device that you can attach to your EC2 instance to significantly accelerate machine learning applications and High Performance Computing (HPC). It empowers your computing resources to achieve the application performance of an on-premises HPC cluster, with the elasticity and scalability provided by AWS. Compared with a TCP transport that is traditionally used in cloud-based HPC systems, EFA provides lower and more consistent latency and higher throughput as it enhances the performance of inter-instance communication.
+
+
+
+Amazon EC2 Monitoring
+EC2 items to monitor
+CPU utilization, Network utilization, Disk performance, Disk Reads/Writes using EC2 metrics
+Memory utilization, disk swap utilization, disk space utilization, page file utilization, log collection using a monitoring agent/CloudWatch Logs
+Automated monitoring tools include:
+System Status Checks – monitor the AWS systems required to use your instance to ensure they are working properly. These checks detect problems with your instance that require AWS involvement to repair.
+Instance Status Checks – monitor the software and network configuration of your individual instance. These checks detect problems that require your involvement to repair.
+Amazon CloudWatch Alarms – watch a single metric over a time period you specify, and perform one or more actions based on the value of the metric relative to a given threshold over a number of time periods.
+Amazon CloudWatch Events – automate your AWS services and respond automatically to system events.
+Amazon CloudWatch Logs – monitor, store, and access your log files from Amazon EC2 instances, AWS CloudTrail, or other sources.
+Monitor your EC2 instances with CloudWatch. By default, EC2 sends metric data to CloudWatch in 5-minute periods.
+You can also enable detailed monitoring to collect data in 1-minute periods.
