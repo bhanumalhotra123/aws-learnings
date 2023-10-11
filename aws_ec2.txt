@@ -1,0 +1,139 @@
+Amazon EC2 Features
+
+The AWS Nitro System is the underlying platform of the next generation of EC2 instances. 
+Traditionally, hypervisors protect the physical hardware and bios, virtualize the CPU, storage, networking, and provide a rich set of management capabilities. 
+With the Nitro System, these functions are offloaded to dedicated hardware and software, thereby reducing the costs of your instances in the process.
+Hence, the Nitro Hypervisor delivers performance that is indistinguishable from bare metal and performs better than its predecessor: the Xen Hypervisor.
+
+Server environments are called instances.
+Package OS and additional installations in a reusable template called Amazon Machine Images.
+
+Various configurations of CPU, memory, storage, and networking capacity for your instances, known as instance types
+t-type and m-type for general purpose
+c-type for compute optimized
+r-type, x-type, and z-type for memory-optimized
+d-type, h-type, and i-type for storage optimized
+f-type, g-type, and p-type for accelerated computing
+
+
+Secure login information for your instances using key pairs
+
+Storage volumes for temporary data that are deleted when you STOP or TERMINATE your instance, known as instance store volumes. 
+Take note that you can stop an EBS-backed instance but not an Instance Store-backed instance. You can only either start or terminate an Instance Store-backed instance.
+
+Persistent storage volumes for your data using Elastic Block Store volumes (see AWS storage services).
+
+Multiple physical locations for deploying your resources, such as instances and EBS volumes, known as regions and Availability Zones (see AWS overview).
+
+A firewall that enables you to specify the protocols, ports, and source IP ranges that can reach your instances using security groups (see aws networking and content delivery).
+
+Static IPv4 addresses for dynamic cloud computing, known as Elastic IP addresses (see aws networking and content delivery).
+
+Metadata, known as tags, that you can create and assign to your EC2 resources
+
+Virtual networks you can create that are logically isolated from the rest of the AWS cloud, and that you can optionally connect to your own network, known as virtual private clouds or VPCs (see aws networking and content delivery).
+
+Add a script that will be run on instance boot called user-data.
+
+Host Recovery for Amazon EC2 automatically restarts your instances on a new host in the event of an unexpected hardware failure on a Dedicated Host.
+
+EC2 Hibernation is available for On-Demand and Reserved Instances running on freshly launched M3, M4, M5, C3, C4, C5, R3, R4, and R5 instances running Amazon Linux and Ubuntu 18.04 LTS. 
+You can enable hibernation for your EBS-backed instances at launch. You can then hibernate and resume your instances through the AWS Management Console, or through the AWS SDK and CLI using the existing stop-instances and start-instances commands.
+Hibernation requires an EC2 instance to be an encrypted EBS-backed instance.
+
+You can allow automatic connection of one or more EC2 instances to an RDS database.
+
+Amazon EC2 Hibernation is a feature provided by Amazon Web Services (AWS) that allows you to pause and resume EC2 (Elastic Compute Cloud) instances. When you enable hibernation for an EC2 instance, it essentially saves the state of the instance to an EBS (Elastic Block Store) volume before stopping it. When you later choose to start the instance, it restores the saved state, allowing you to continue from where you left off. 
+This is particularly useful for workloads that require a long time to initialize, or for applications that need to maintain their current state and memory contents.
+
+
+
+Instance states
+
+Start – run your instance normally. You are continuously billed while your instance is running.
+
+Stop – is just a normal instance shut down. You may restart it again anytime. All EBS volumes remain attached, but data in instance store volumes are deleted.
+You won’t be charged for usage while instance is stopped. You can attach or detach EBS volumes. 
+You can also create an AMI from the instance, and change the kernel, RAM disk, and instance type while in this state.
+
+Hibernate – When an instance is hibernated, it writes the in-memory state to a file in the root EBS volume and then shuts itself down. 
+The AMI used to launch the instance must be encrypted, and also the root EBS volume of the instance. The encryption ensures proper protection for sensitive data when it is copied from memory to the EBS volume. 
+While the instance is in hibernation, you pay only for the EBS volumes and Elastic IP Addresses attached to it; there are no hourly charges.
+
+Terminate – instance performs a normal shutdown and gets deleted. You won’t be able to restart an instance once you terminate it.
+The root device volume is deleted by default, but any attached EBS volumes are preserved by default. Data in instance store volumes are deleted.
+To prevent accidental termination, enable termination protection.
+By enabling instance stop protection, you can prevent an instance from being accidentally stopped.
+
+
+
+Root Device Volumes
+The root device volume contains the image used to boot the instance.
+
+You can replace the root volume of a running EC2 instance using the following:
+Initial launch state
+Snapshot
+AMI
+
+Instance Store-backed Instances
+Any data on the instance store volumes are deleted when the instance is terminated (instance store-backed instances do not support the Stop action) or if it fails (such as if an underlying drive has issues).
+You should also back up critical data from your instance store volumes to persistent storage on a regular basis.
+
+Amazon EBS-backed Instances
+An Amazon EBS-backed instance can be stopped and later restarted without affecting data stored in the attached volumes.
+When in a stopped state, you can modify the properties of the instance, change its size, or update the kernel it is using, or you can attach your root volume to a different running instance for debugging or any other purpose.
+By default, the root device volume for an AMI backed by Amazon EBS is deleted when the instance terminates.
+Previously, to launch an encrypted EBS-backed EC2 instance from an unencrypted AMI, you would first need to create an encrypted copy of the AMI and use that to launch the EC2 instance. Now, you can launch encrypted EBS-backed EC2 instances from unencrypted AMIs directly.
+
+
+Amazon EC2 – AMI
+Includes the following:
+A template for the root volume for the instance (OS, application server, and applications)
+Launch permissions that control which AWS accounts can use the AMI to launch instances
+A block device mapping that specifies the volumes to attach to the instance when it’s launched.
+
+Backed by Amazon EBS – root device for an instance launched from the AMI is an Amazon EBS volume. AMIs backed by Amazon EBS snapshots can use EBS encryption.
+Backed by Instance Store – root device for an instance launched from the AMI is an instance store volume created from a template stored in S3.
+
+You can copy AMIs to different regions.
+
+Recycle Bin
+You can restore deleted AMIs using recycle bin.
+
+You can set lock retention rules to protect against modifications and deletions.
+
+Check the timestamp to see when your AMI was last used to launch an instance.
+
+By default, a public AMI is deprecated after 2-years from the creation date.
+
+In the EC2 console, public AMIs owned by Amazon or a verified Amazon partner is marked as a verified provider.
+
+When an AMI changes state, an event is automatically generated, and you can use Amazon EventBridge to detect and respond to these events.
+
+With UEFI Secure Boot, you can ensure that an instance only boots software signed with cryptographic keys.
+
+You can configure an AMI to use Instance Metadata Service Version 2 (IMDSv2) when requesting instance metadata.
+
+If an AMI has been shared with your AWS account, you can remove your account from the AMI’s launch permissions.
+
+
+
+
+  Amazon EC2 Image Builder
+A fully managed AWS service that automates the creation, management, and deployment of your Amazon Machine Images (AMIs)
+The AWS Management Console, AWS Command Line Interface, or AWS APIs can be used to create custom images in your AWS account.
+The customized images that Image Builder creates in your account are owned by you, and you can configure pipelines to automate updates as well as system patching for the images in your AWS account.
+Amazon EC2 Image Builder also provides a stand-alone command to create an AMI with the configuration resources that you have defined.
+
+
+
+Instance Metadata and User Data
+Instance metadata is data about your instance that you can use to configure or manage the running instance.
+Instance metadata and user data are not protected by cryptographic methods.
+View all categories of instance metadata from within a running instance at http://169.254.169.254/latest/meta-data/
+You can pass two types of user data to EC2: shell scripts and cloud-init directives.
+User data is limited to 16 KB.
+If you stop an instance, modify its user data, and start the instance, the updated user data is not executed when you start the instance.
+Retrieve user data from within a running instance at http://169.254.169.254/latest/user-data
+An instance tag can be accessed from the instance metadata.
+When using Auto Scaling groups, the instance metadata contains information about an instance’s target lifecycle state.
