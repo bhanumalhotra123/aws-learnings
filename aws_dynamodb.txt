@@ -150,18 +150,30 @@ Quickly identify a resource based on the tags you’ve assigned to it.
 See AWS bills broken down by tags.
 Each DynamoDB table can have only one tag with the same key. If you try to add an existing tag (same key), the existing tag value will be updated to the new value.
 Maximum number of tags per resource: 50
+
+
+
 DynamoDB Items
 You can use the UpdateItem operation to implement an atomic counter – a numeric attribute that is incremented, unconditionally, without interfering with other write requests.
 DynamoDB optionally supports conditional writes for these operations: PutItem, UpdateItem, DeleteItem. A conditional write will succeed only if the item attributes meet one or more expected conditions.
 Conditional writes can be idempotent if the conditional check is on the same attribute that is being updated. DynamoDB performs a given write request only if certain attribute values in the item match what you expect them to be at the time of the request.
+
+
+
 Expressions
 To get only a few attributes of an item, use a projection expression.
 An expression attribute name is a placeholder that you use in an expression, as an alternative to an actual attribute name. An expression attribute name must begin with a #, and be followed by one or more alphanumeric characters.
 Expression attribute values are substitutes for the actual values that you want to compare — values that you might not know until runtime. An expression attribute value must begin with a :, and be followed by one or more alphanumeric characters.
 For PutItem, UpdateItem and DeleteItem operations, you can specify a condition expression to determine which items should be modified. If the condition expression evaluates to true, the operation succeeds; otherwise, the operation fails.
 An update expression specifies how UpdateItem will modify the attributes of an item—for example, setting a scalar value, or removing elements from a list or a map.
+
+
+
 Time To Live (TTL)
 Allows you to define when items in a table expire so that they can be automatically deleted from the database.
+
+
+
 DynamoDB Queries
 The Query operation finds items based on primary key values. You can query any table or secondary index that has a composite primary key (a partition key and a sort key).
 A key condition expression is a search criteria that determines the items to be read from the table or index.
@@ -173,6 +185,9 @@ The Query operation allows you to limit the number of items that it returns in t
 DynamoDB paginates the results from Query operations, where Query results are divided into “pages” of data that are 1 MB in size (or less).
 ScannedCount is the number of items that matched the key condition expression, before a filter expression (if present) was applied.
 Count is the number of items that remain, after a filter expression (if present) was applied.
+
+
+
 DynamoDB Scans
 A Scan operation reads every item in a table or a secondary index. By default, a Scan operation returns all of the data attributes for every item in the table or index.
 Scan always returns a result set. If no matching items are found, the result set will be empty.
@@ -184,6 +199,9 @@ ScannedCount is the number of items evaluated, before any ScanFilter is applied.
 Count is the number of items that remain, after a filter expression (if present) was applied.
 A Scan operation performs eventually consistent reads, by default.
 By default, the Scan operation processes data sequentially.
+
+
+
 On-Demand Backup and Restore
 You can use IAM to restrict DynamoDB backup and restore actions for some resources.
 All backup and restore actions are captured and recorded in AWS CloudTrail.
@@ -207,12 +225,19 @@ You cannot overwrite an existing table during a restore operation.
 You restore backups to a new table.
 For tables with even data distribution across your primary keys, the restore time is proportional to the largest single partition by item count and not the overall table size.
 If your source table contains data with significant skew, the time to restore may increase.
+
+
+
+
 DynamoDB Transactions
 Amazon DynamoDB transactions simplify the developer experience of making coordinated, all-or-nothing changes to multiple items both within and across tables. 
 Transactions provide atomicity, consistency, isolation, and durability (ACID) in DynamoDB, helping you to maintain data correctness in your applications.
 You can group multiple Put, Update, Delete, and ConditionCheck actions. You can then submit the actions as a single TransactWriteItems operation that either succeeds or fails as a unit. 
 You can group and submit multiple Get actions as a single TransactGetItems operation.
 Amazon DynamoDB supports up to 25 unique items and 4 MB of data per transactional request.
+
+
+
 Global Tables
 Global tables provide a solution for deploying a multi-region, multi-master database, without having to build and maintain your own replication solution.
 You specify the AWS regions where you want the table to be available. DynamoDB performs all tasks to create identical tables in these regions, and propagate ongoing data changes to all of them.
@@ -232,6 +257,10 @@ None of the replica tables in the global table can contain any data.
 If global secondary indexes are specified, then the following conditions must also be met:
 The global secondary indexes must have the same name.
 The global secondary indexes must have the same partition key and sort key (if present).
+
+
+
+
 Amazon DynamoDB Security
 Encryption
 Encrypts your data at rest using an AWS Key Management Service (AWS KMS) managed encryption key for DynamoDB.
@@ -261,6 +290,11 @@ Action – use action keywords to identify resource operations that you want to 
 Effect – specify the effect, either allow or deny, when the user requests the specific action.
 Principal – the user that the policy is attached to is the implicit principal.
 Web Identity Federation – Customers can sign in to an identity provider and then obtain temporary security credentials from AWS Security Token Service (AWS STS).
+
+
+
+
+
 Amazon DynamoDB Monitoring
 Automated tools:
 Amazon CloudWatch Alarms – Watch a single metric over a time period that you specify, and perform one or more actions based on the value of the metric relative to a given threshold over a number of time periods.
@@ -268,6 +302,11 @@ Amazon CloudWatch Logs – Monitor, store, and access your log files from AWS Cl
 Amazon CloudWatch Events – Match events and route them to one or more target functions or streams to make changes, capture state information, and take corrective action.
 AWS CloudTrail Log Monitoring – Share log files between accounts, monitor CloudTrail log files in real time by sending them to CloudWatch Logs, write log processing applications in Java, and validate that your log files have not changed after delivery by CloudTrail.
 Using the information collected by CloudTrail, you can determine the request that was made to DynamoDB, the IP address from which the request was made, who made the request, when it was made, and additional details.
+
+
+
+
+
 DynamoDB Accelerator (DAX) 
 DAX is a fully managed, highly available, in-memory cache for DynamoDB.
 DynamoDB Accelerator (DAX) delivers microsecond response times for accessing eventually consistent data.
