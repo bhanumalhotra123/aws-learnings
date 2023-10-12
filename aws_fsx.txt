@@ -1,0 +1,127 @@
+Amazon FSx is a fully managed third-party file system solution. It uses SSD storage to provide fast performance with low latency.
+
+There are four available FSx solutions available in AWS:
+
+
+Amazon FSx for Windows File Server:
+A fully managed native Microsoft Windows file system with full support for the SMB protocol, Windows NTFS, and Microsoft Active Directory (AD) integration.
+
+Common Use Cases 
+
+File systems that is accessible by multiple users, and can establish permissions at the file or folder level.
+Application workloads that require shared file storage provided by Windows-based file systems (NTFS) and that use the SMB protocol.
+Media workflows like media transcoding, processing, and streaming.
+Data-intensive analytics workloads.
+Content management and web serving applications such as IIS
+
+
+Works with the following compute services:
+
+Amazon EC2
+Amazon Workspaces instances
+Amazon AppStream 2.0 instances
+VMs running in VMWare Cloud on AWS Environments
+Works with Microsoft Active Directory (AD) to integrate your file system with your existing Windows environments.
+Supports the use of AWS Direct Connect or AWS VPN to access your file systems from your on-premises compute instances.
+Microsoft Windows File Share
+A Microsoft Windows file share is a specific folder in your file system, including that folder’s subfolders, which you make accessible to your compute instances with the Server Message Block (SMB) protocol.
+Your file system comes with a default Windows file share, named share. You can create and manage as many other Windows file shares as you want by using the Windows graphical user interface (GUI) tool called Shared Folders.
+To access your file shares, you use the Windows Map Network Drive functionality to map a drive letter on your compute instance to your Amazon FSx file share. 
+
+
+Storage
+You can configure user storage quotas on your file systems to limit how much data storage that users can consume. After you set quotas, you can track quota status to monitor usage and see when users surpass their quotas.
+You can use DFS (Distributed File System) Namespaces to group file shares on multiple file systems into one common folder structure (a namespace) that you use to access the entire file dataset.
+
+
+Amazon FSx
+You can reduce your data storage costs by turning on data deduplication for your file system. Data deduplication reduces or eliminates redundant data by storing duplicated portions of the dataset only once.
+
+
+Performance Metrics
+Amazon FSx uses SSD storage, provides storage of up to 64 TB per file system, and throughput of up to 2GB/s per file system.
+You can use DFS Namespaces to create shared common namespaces spanning multiple Amazon FSx file systems to scale-out storage and throughput. Each common namespace is capable of scaling out storage to hundreds of petabytes of data, and performance to tens of GB/s of throughput, and millions of IOPS.
+
+
+
+Amazon FSx Migration
+To migrate your existing file data into Amazon FSx, use Windows’s Robust File Copy (RoboCopy) to copy your files (both the data and the full set of metadata like ownership and Access Control Lists) directly to Amazon FSx.
+
+
+
+Amazon FSx for Lustre
+
+A high-performance file system optimized for fast processing of workloads. Lustre is a popular open-source parallel file system.
+
+You can choose between SSD storage options and HDD storage options, each offering different levels of performance. The HDD options reduce storage costs by up to 80% for throughput-intensive workloads that don’t require the sub-millisecond latencies of SSD storage.
+
+Since this is a high-performance parallel file system, you can use Amazon FSx as “hot” storage for your highly accessed files, and Amazon S3 as “cold” storage for rarely accessed files.
+
+When linked to an S3 bucket, an FSx for Lustre file system transparently presents S3 objects as files and allows you to write results back to S3. 
+
+The Lustre file system provides a POSIX-compliant file system interface.
+
+Also supports concurrent access to the same file or directory from thousands of compute instances
+
+
+
+You can mount your Amazon FSx for Lustre file system from an on-premises client over AWS Direct Connect or VPN, and then use parallel copy tools to import your data to your Amazon FSx for Lustre file system.
+You can export files and their associated metadata that you have written or modified in your file system to your durable data repository on Amazon S3
+
+Performance Metrics
+Provides sub-millisecond access to your data
+Allows you to read and write data at speeds of up to hundreds of gigabytes per second of throughput and millions of IOPS.
+
+FSx for Lustre provides 200MBps of baseline throughput per TB of storage provisioned. As your file systems scales, your throughput can scale up to hundreds of GB/s.
+Limits
+
+Amazon FSx for NetApp ONTAP
+A shared file storage solution that provides high-performance SSD storage with submillisecond latency and is widely accessible from Linux, Windows, and macOS compute instances running on AWS or on-premises.
+
+FSx for ONTAP file system is composed of the following:
+Storage Virtual Machines (SVMs)
+
+Volumes
+Supports multi-protocol access to data using NFS, SMB, and iSCSI.
+
+Each file system has the following endpoints to access NetApp applications:
+Management – access NetApp ONTAP CLI over SSH or to use NetApp ONTAP REST API.
+Intercluster – set up replication using NetApp SnapMirror or caching with NetApp FlexCache.
+Automatically transitions data to a between storage tiers based on your access patterns.
+Data that is accessed infrequently is automatically moved to the capacity pool tier. 
+Auto – moves cold user data blocks from active file system and snapshot copies to the capacity pool tier.
+Snapshot-only – moves user data blocks that are not associated with active file system to capacity pool tier.
+All – moves all user data blocks from active file system and snapshot copies to the capacity pool tier.
+None – keeps volume data in primary storage tier.
+
+Amazon FSx for OpenZFS
+A file storage service that delivers up to 1 million IOPS with latencies of hundreds of microseconds.
+Enables you to move data from on-premises ZFS without modifying application code.
+OpenZFS file system is powered by the AWS Graviton family of processors
+
+With NFS protocol, OpenZFS file system is accessible from Linux, Windows, and macOS compute instances and containers.
+data management capabilities:
+Z-Standard compression
+Instant point-in-time snapshots
+Data cloning
+File system backups are stored on S3, with cross-region backup copies.
+Support for multiple volumes per file system, thin provisioning, and user and group quotas.
+
+Amazon FSx Windows File Servers vs. Amazon EFS vs. Amazon FSx for Lustre: https://tutorialsdojo.com/amazon-efs-vs-amazon-fsx-for-windows-vs-amazon-fsx-for-lustre/ 
+High Availability and Durability
+Automatically replicates your data within an Availability Zone (AZ) it resides in (which you specify during creation).
+Offers single AZ and multi-AZ deployment options for your Windows file-based workloads.
+Uses the Volume Shadow Copy Service (VSS) to automatically takes highly durable, file-system consistent daily backups to S3
+Supports restoring individual files and folders to previous versions using Windows shadow copies.
+The default backup retention period is 7 days.
+
+Amazon FSx Security
+Supports identity-based authentication over the Server Message Block (SMB) protocol through Microsoft Active Directory.
+Amazon FSx automatically encrypts your data at-rest using AWS KMS and in-transit using SMB Kerberos session keys. 
+Amazon FSx is ISO, PCI-DSS, and SOC compliant, and is HIPAA eligible. 
+Integrated with AWS CloudTrail that monitors and logs your API calls.
+
+
+Amazon FSx Pricing
+You are billed hourly for your Amazon FSx file systems, based on your configured storage capacity (priced per GB-month) and throughput capacity (priced per MBps-month). 
+You are billed hourly for your backup storage (priced per GB-month). You can enable data deduplication to automatically reduce costs associated with
