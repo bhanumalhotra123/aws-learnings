@@ -1,0 +1,236 @@
+AWS Aurora
+
+A fully managed relational database engine that’s compatible with MySQL and PostgreSQL.
+
+With some workloads, Aurora can deliver up to five times the throughput of MySQL and up to three times the throughput of PostgreSQL.
+Aurora includes a high-performance storage subsystem. The underlying storage grows automatically as needed, up to 128 terabytes. The minimum storage is 10GB.
+
+Aurora will keep your database up-to-date with the latest patches.
+Aurora supports quick, efficient cloning operations.
+You can share your Amazon Aurora DB clusters with other AWS accounts for quick and efficient database cloning.
+Aurora is fault-tolerant and self-healing.
+
+
+
+
+
+DB Clusters
+An Aurora DB cluster consists of one or more DB instances and a cluster volume that manages the data for those DB instances.
+An Aurora cluster volume is a virtual database storage volume that spans multiple AZs, with each AZ having a copy of the DB cluster data.
+
+Cluster Types:
+Primary DB instance – Supports read and write operations, and performs all of the data modifications to the cluster volume. Each Aurora DB cluster has one primary DB instance.
+Aurora Replica – Connects to the same storage volume as the primary DB instance and supports only read operations. Each Aurora DB cluster can have up to 15 Aurora Replicas in addition to the primary DB instance.
+Aurora automatically fails over to an Aurora Replica in case the primary DB instance becomes unavailable. You can specify the failover priority for Aurora Replicas. Aurora Replicas can also offload read workloads from the primary DB instance.
+
+
+
+
+Aurora Endpoints
+Cluster endpoint – connects to the current primary DB instance for a DB cluster. This endpoint is the only one that can perform write operations. Each Aurora DB cluster has one cluster endpoint and one primary DB instance.
+Reader endpoint – connects to one of the available Aurora Replicas for that DB cluster. Each Aurora DB cluster has one reader endpoint. The reader endpoint provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint for read operations, such as queries. You can’t use the reader endpoint for write operations.
+Custom endpoint – represents a set of DB instances that you choose. When you connect to the endpoint, Aurora performs load balancing and chooses one of the instances in the group to handle the connection. You define which instances this endpoint refers to, and you decide what purpose the endpoint serves.
+Instance endpoint – connects to a specific DB instance within an Aurora cluster. The instance endpoint provides direct control over connections to the DB cluster. The main way that you use instance endpoints is to diagnose capacity or performance issues that affect one specific instance in an Aurora cluster.
+
+When you connect to an Aurora cluster, the host name and port that you specify point to an intermediate handler called an endpoint.
+
+
+
+
+
+Storage and Reliability
+Aurora data is stored in the cluster volume, which is designed for reliability. A cluster volume consists of copies of the data across multiple Availability Zones in a single AWS Region.
+
+Aurora automatically detects failures in the disk volumes that make up the cluster volume. When a segment of a disk volume fails, Aurora immediately repairs the segment. When Aurora repairs the disk segment, it uses the data in the other volumes that make up the cluster volume to ensure that the data in the repaired segment is current.
+
+Aurora preloads the buffer pool with the pages for known common queries that are stored in an in-memory page cache when a database starts up after it has been shut down or restarted after a failure.
+
+Aurora is designed to recover from a crash almost instantaneously and continue to serve your application data without the binary log. Aurora performs crash recovery asynchronously on parallel threads, so that your database is open and available immediately after a crash.
+
+Amazon Aurora Auto Scaling works with Amazon CloudWatch to automatically add and remove Aurora Replicas in response to changes in performance metrics that you specify. This feature is available in the PostgreSQL-compatible edition of Aurora. There is no additional cost to use Aurora Auto Scaling beyond what you already pay for Aurora and CloudWatch alarms.
+
+Dynamic resizing automatically decreases the allocated storage space from your Aurora database cluster when you delete data.
+
+
+
+
+
+
+High Availability and Fault Tolerance
+
+When you create Aurora Replicas across Availability Zones, RDS automatically provisions and maintains them synchronously. The primary DB instance is synchronously replicated across Availability Zones to Aurora Replicas to provide data redundancy, eliminate I/O freezes, and minimize latency spikes during system backups.
+
+An Aurora DB cluster is fault tolerant by design. If the primary instance in a DB cluster fails, Aurora automatically fails over to a new primary instance in one of two ways:
+
+By promoting an existing Aurora Replica to the new primary instance
+
+By creating a new primary instance
+
+Aurora storage is also self-healing. Data blocks and disks are continuously scanned for errors and repaired automatically.
+Aurora backs up your cluster volume automatically and retains restore data for the length of the backup retention period, from 1 to 35 days.
+Aurora automatically maintains 6 copies of your data across 3 Availability Zones and will automatically attempt to recover your database in a healthy AZ with no data loss.
+Aurora has a Backtrack feature that rewinds or restores the DB cluster to the time you specify. However, take note that the Amazon Aurora Backtrack feature is not a total replacement for fully backing up your DB cluster since the limit for a backtrack window is only 72 hours.
+With Aurora MySQL, you can set up cross-region Aurora Replicas using either logical or physical replication. Aurora PostgreSQL does not currently support cross-region replicas.
+
+
+
+
+
+Aurora Global Database 
+An Aurora global database spans multiple AWS Regions, enabling low latency global reads and disaster recovery from region-wide outages.
+Consists of one primary AWS Region where your data is mastered, and one read-only, secondary AWS Region.
+Aurora global databases use dedicated infrastructure to replicate your data.
+Aurora global databases introduce a higher level of failover capability than a default Aurora cluster.
+
+An Aurora cluster can recover in less than 1 minute even in the event of a complete regional outage. This provides your application with an effective Recovery Point Objective (RPO) of 5 seconds and a Recovery Time Objective (RTO) of less than 1 minute.
+
+Has managed planned failover capability, which lets you change which AWS Region hosts the primary cluster while preserving the physical topology of your global database and avoiding unnecessary application changes.
+
+
+DB Cluster Configurations
+Aurora supports two types of instance classes
+Memory Optimized
+Burstable Performance
+
+
+
+
+Aurora Serverless is an on-demand, autoscaling configuration for Amazon Aurora (supports both MySQL and PostgreSQL). An Aurora Serverless DB cluster automatically starts up, shuts down, and scales up or down capacity based on your application’s needs.
+A non-Serverless DB cluster for Aurora is called a provisioned DB cluster.
+Instead of provisioning and managing database servers, you specify Aurora Capacity Units (ACUs). Each ACU is a combination of processing and memory capacity.
+You can choose to pause your Aurora Serverless DB cluster after a given amount of time with no activity. The DB cluster automatically resumes and services the connection requests after receiving requests.
+Aurora Serverless does not support fast failover, but it supports automatic multi-AZ failover.
+
+The cluster volume for an Aurora Serverless cluster is always encrypted. You can choose the encryption key, but not turn off encryption.
+
+You can set the following specific values:
+Minimum Aurora capacity unit – Aurora Serverless can reduce capacity down to this capacity unit.
+Maximum Aurora capacity unit – Aurora Serverless can increase capacity up to this capacity unit.
+Pause after inactivity – The amount of time with no database traffic to scale to zero processing capacity.
+
+You pay by the second and only when the database is in use. 
+You can share snapshots of Aurora Serverless DB clusters with other AWS accounts or publicly. You also have the ability to copy Aurora Serverless DB cluster snapshots across AWS regions.
+
+
+
+Limitations of Aurora Serverless
+
+Aurora Serverless supports specific MySQL and PostgreSQL versions only.
+The port number for connections must be:
+3306 for Aurora MySQL
+5432 for Aurora PostgreSQL
+You can’t give an Aurora Serverless DB cluster a public IP address. You can access an Aurora Serverless DB cluster only from within a virtual private cloud (VPC) based on the Amazon VPC service.
+
+Each Aurora Serverless DB cluster requires two AWS PrivateLink endpoints. If you reach the limit for PrivateLink endpoints within your VPC, you can’t create any more Aurora Serverless clusters in that VPC.
+
+A DB subnet group used by Aurora Serverless can’t have more than one subnet in the same Availability Zone.
+
+Changes to a subnet group used by an Aurora Serverless DB cluster are not applied to the cluster.
+
+
+Aurora Serverless doesn’t support the following features:
+
+Loading data from an Amazon S3 bucket
+Saving data to an Amazon S3 bucket
+Invoking an AWS Lambda function with an Aurora MySQL native function
+Aurora Replicas
+Backtrack
+Multi-master clusters
+Database cloning
+IAM database authentication
+Restoring a snapshot from a MySQL DB instance
+Amazon RDS Performance Insights
+
+
+
+
+
+When you reboot the primary instance of an Aurora DB cluster, RDS also automatically restarts all of the Aurora Replicas in that DB cluster. When you reboot the primary instance of an Aurora DB cluster, no failover occurs. When you reboot an Aurora Replica, no failover occurs.
+
+Deletion protection is enabled by default when you create a production DB cluster using the AWS Management Console. However, deletion protection is disabled by default if you create a cluster using the AWS CLI or API.
+
+For Aurora MySQL, you can’t delete a DB instance in a DB cluster if both of the following conditions are true:
+The DB cluster is a Read Replica of another Aurora DB cluster.
+The DB instance is the only instance in the DB cluster.
+
+
+Aurora Multi Master
+The feature is available on Aurora MySQL 5.6 
+Allows you to create multiple read-write instances of your Aurora database across multiple Availability Zones, which enables uptime-sensitive applications to achieve continuous write availability through instance failure. 
+In the event of instance or Availability Zone failures, Aurora Multi-Master enables the Aurora database to maintain read and write availability with zero application downtime. There is no need for database failovers to resume write operations.
+
+
+
+
+Tags
+You can use Amazon RDS tags to add metadata to your RDS resources.
+Tags can be used with IAM policies to manage access and to control what actions can be applied to the RDS resources.
+Tags can be used to track costs by grouping expenses for similarly tagged resources.
+
+
+
+
+Amazon Aurora Monitoring
+Subscribe to Amazon RDS events to be notified when changes occur with a DB instance, DB cluster, DB cluster snapshot, DB parameter group, or DB security group.
+Database log files
+RDS Enhanced Monitoring — Look at metrics in real time for the operating system.
+RDS Performance Insights monitors your Amazon RDS DB instance load so that you can analyze and troubleshoot your database performance.
+Use CloudWatch Metrics, Alarms and Logs
+
+
+
+Amazon Aurora Security
+
+Use IAM to control access.
+To control which devices and EC2 instances can open connections to the endpoint and port of the DB instance for Aurora DB clusters in a VPC, you use a VPC security group.
+You can make endpoint and port connections using Transport Layer Security (TLS) / Secure Sockets Layer (SSL). In addition, firewall rules can control whether devices running at your company can open connections to a DB instance.
+Use RDS encryption to secure your RDS instances and snapshots at rest.
+
+You can authenticate to your DB cluster using AWS IAM database authentication. IAM database authentication works with Aurora MySQL and Aurora PostgreSQL. With this authentication method, you don’t need to use a password when you connect to a DB cluster. Instead, you use an authentication token, which is a unique string of characters that Amazon Aurora generates on request.
+
+
+
+
+
+Aurora for MySQL
+
+Performance Enhancements
+
+Push-Button Compute Scaling
+Storage Auto-Scaling
+Low-Latency Read Replicas
+Serverless Configuration
+Custom Database Endpoints
+Fast insert accelerates parallel inserts sorted by primary key.
+Aurora MySQL parallel query is an optimization that parallelizes some of the I/O and computation involved in processing data-intensive queries.
+You can use the high-performance Advanced Auditing feature in Aurora MySQL to audit database activity. To do so, you enable the collection of audit logs by setting several DB cluster parameters.
+
+
+Scaling
+Instance scaling – scale your Aurora DB cluster by modifying the DB instance class for each DB instance in the DB cluster.
+Read scaling – as your read traffic increases, you can create additional Aurora Replicas and connect to them directly to distribute the read load for your DB cluster.
+
+
+
+Aurora for PostgreSQL
+
+Performance Enhancements
+
+Push-button Compute Scaling
+Storage Auto-Scaling
+Low-Latency Read Replicas
+Custom Database Endpoints
+
+Scaling
+Instance scaling
+Read scaling
+
+Amazon Aurora PostgreSQL now supports logical replication. With logical replication, you can replicate data changes from your Aurora PostgreSQL database to other databases using native PostgreSQL replication slots, or data replication tools such as the AWS Database Migration Service.
+Rebooting the primary instance of an Amazon Aurora DB cluster also automatically reboots the Aurora Replicas for that DB cluster, in order to re-establish an entry point that guarantees read/write consistency across the DB cluster.
+You can import data (supported by the PostgreSQL COPY command) stored in an Amazon S3 bucket into a PostgreSQL table.
+
+
+Amazon Aurora Pricing
+You are charged for DB instance hours, I/O requests, Backup storage and Data transfer.
+You can purchase On-Demand Instances and pay by the hour for the DB instance hours that you use, or Reserved Instances to reserve a DB instance for a one-year or three-year term and receive a significant discount compared to the on-demand DB instance pricing.
+Aurora PostgreSQL support for Kerberos and Microsoft Active Directory provides the benefits of single sign-on and centralized authentication of Aurora PostgreSQL database users. In addition to password-based and IAM-based authentication methods, you can also authenticate using AWS Managed Microsoft AD Service
