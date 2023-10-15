@@ -1,0 +1,31 @@
+1.Amazon SWF provides useful guarantees around task assignments. It ensures that a task is never duplicated and is assigned only once. 
+Thus, even though you may have multiple workers for a particular activity type (or a number of instances of a decider), Amazon SWF will give a specific task to only one worker (or one decider instance).
+Additionally, Amazon SWF keeps at most one decision task outstanding at a time for workflow execution. Thus, you can run multiple decider instances without worrying about two instances operating on the same execution simultaneously. 
+These facilities enable you to coordinate your workflow without worrying about duplicate, lost, or conflicting tasks.
+
+
+2.Predictive scaling uses machine learning to predict capacity requirements based on historical data from CloudWatch. 
+The machine learning algorithm consumes the available historical data and calculates capacity that best fits the historical load pattern, and then continuously learns based on new data to make future forecasts more accurate.
+In general, if you have regular patterns of traffic increases and applications that take a long time to initialize, you should consider using predictive scaling. 
+Predictive scaling can help you scale faster by launching capacity in advance of forecasted load, compared to using only dynamic scaling, which is reactive in nature. 
+Predictive scaling can also potentially save you money on your EC2 bill by helping you avoid the need to overprovision capacity. 
+You also don't have to spend time reviewing your application's load patterns and trying to schedule the right amount of capacity using scheduled scaling.
+
+3.SAML, which stands for Security Assertion Markup Language, is a specific protocol used for implementing Single Sign-On (SSO).
+
+4.There are two AWS services for issuing and deploying X.509 certificates. Choose the one that best fits your needs.
+Considerations include whether you need public- or private-facing certificates, customized certificates, certificates you want to deploy into other AWS services, or automated certificate management and renewal.
+
+In the context of web security, X.509 certificates play a crucial role in SSL/TLS (Secure Sockets Layer/Transport Layer Security) protocols, where they are used to secure the communication between web browsers and servers. A server's X.509 certificate is presented to the client to establish a secure connection.
+
+ACM public certificates are used to secure public-facing services accessible over the internet, while ACM private certificates are used to secure internal resources and services within an AWS VPC or a private network. 
+
+
+5.You can configure Amazon Redshift to copy snapshots for a cluster to another region. To configure cross-region snapshot copy, you need to enable this copy feature for each cluster and configure where to copy snapshots and how long to keep copied automated snapshots in the destination region. 
+When a cross-region copy is enabled for a cluster, all new manual and automatic snapshots are copied to the specified region.
+
+
+6.CORS will only allow objects from one domain (travel.cebu.com) to be loaded and accessible to a different domain (palawan.com). It won't necessarily expose objects for public access all over the internet.
+Amazon S3 defaults to private access, but allows resource owners to set access policies, including public access, via resource-based and user-based policies. Public access is granted for specific use cases, like hosting websites.
+
+7.
