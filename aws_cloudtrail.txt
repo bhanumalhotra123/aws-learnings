@@ -51,3 +51,14 @@ AWS CloudTrail Price
 The first copy of management events within each region is delivered free of charge. Additional copies of management events are charged.
 Data events are recorded and charged only for the Lambda functions, DynamoDB tables, and S3 buckets you specify.
 Once a CloudTrail trail is set up, S3 charges apply based on your usage, since CloudTrail delivers logs to an S3 bucket.
+
+
+ here is one example of each type of CloudTrail logging:
+
+Management event:
+An IAM user creates an Amazon EC2 instance.
+Data event:
+An object is uploaded to an Amazon S3 bucket.
+CloudTrail Insights event:
+CloudTrail Insights detects a spike in the number of Amazon EC2 StopInstances API calls, which could indicate that an unauthorized user is trying to shut down your EC2 instances.
+
