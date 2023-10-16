@@ -1,0 +1,248 @@
+AWS Glue Cheat
+
+A fully managed service to extract, transform, and load (ETL) your data for analytics.
+Discover and search across different AWS data sets without moving your data.
+
+AWS Glue consists of:
+Central metadata repository
+ETL engine
+Flexible scheduler
+
+
+
+Use Cases
+
+Run queries against an Amazon S3 data lake
+You can use AWS Glue to make your data available for analytics without moving your data.
+Analyze the log data in your data warehouse
+Create ETL scripts to transform, flatten, and enrich the data from source to target.
+Create event-driven ETL pipelines
+As soon as new data becomes available in Amazon S3, you can run an ETL job by invoking AWS Glue ETL jobs using an AWS Lambda function.
+A unified view of your data across multiple data stores
+With AWS Glue Data Catalog, you can quickly search and discover all your datasets and maintain the relevant metadata in one central repository.
+
+
+Concepts
+
+
+AWS Glue Data Catalog
+
+A persistent metadata store.
+The data that are used as sources and targets of your ETL jobs are stored in the data catalog.
+You can only use one data catalog per region.
+AWS Glue Data catalog can be used as the Hive metastore.
+It can contain database and table resource links.
+
+
+Database
+A set of associated table definitions, organized into a logical group.
+A container for tables that define data from different data stores.
+If the database is deleted from the Data Catalog, all the tables in the database are also deleted.
+
+
+Data store, data source, and data target
+To persistently store your data in a repository, you can use a .
+Data stores: Amazon S3, Amazon RDS, Amazon Redshift, Amazon DynamoDB, JDBC
+The is used as input to a process or transform.
+A location where the data store process or transform writes to is called a .
+
+
+Table
+The metadata definition that represents your data.
+You can define tables using JSON, CSV, Parquet, Avro, and XML.
+You can use the table as the source or target in a job definition.
+A link to a local or shared table is called a t.
+To add a table definition:
+Run a crawler.
+Create a table manually using the AWS Glue console.
+Use AWS Glue API CreateTable operation.
+Use AWS CloudFormation templates.
+Migrate the Apache Hive metastore
+A partitioned table describes an AWS Glue table definition of an Amazon S3 folder.
+Reduce the overall data transfers, processing, and query processing time with .
+
+
+Connection
+It contains the properties that you need to connect to your data.
+To store connection information for a data store, you can add a connection using:
+JDBC
+Amazon RDS
+Amazon Redshift
+Amazon DocumentDB
+MongoDB
+Kafka
+Network
+You can enable SSL connection for JDBC, Amazon RDS, Amazon Redshift, and MongoDB.
+
+
+Crawler
+You can use crawlers to populate the AWS Glue Data Catalog with tables.
+Crawlers can crawl file-based and table-based data stores. 
+Data stores: S3, JDBC, DynamoDB, Amazon DocumentDB, and MongoDB
+It can crawl multiple data stores in a single run.
+
+How Crawlers work
+Determine the format, schema, and associated properties of the raw data by classifying the data – create a custom classifier to configure the results of the classification.
+Group the data into tables or partitions – you can group the data based on the crawler heuristics.
+Writes metadata to the AWS Glue Data Catalog – set up how the crawler adds, updates, and deletes tables and partitions.
+For incremental datasets with a stable table schema, you can use incremental crawls. It only crawls the folders that were added since the last crawler run.
+You can run a crawler on-demand or based on a schedule.
+Select the Logs link to view the results of the crawler. The link redirects you to CloudWatch Logs.
+
+
+Classifier
+It reads the data in the data store.
+You can use a set of built-in classifiers or create a custom classifier.
+By adding a classifier, you can determine the schema of your data.
+Custom classifier types: Grok, XML, JSON and CSV
+AWS Glue Studio 
+Visually author, run, view, and edit your ETL jobs.
+Diagnose, debug, and check the status of your ETL jobs.
+
+
+Job
+To perform ETL works, you need to create a job.
+When creating a job, you need to provide data sources, targets, and other information. The result will be generated in a PySpark script and stored the job definition in the AWS Glue Data Catalog.
+Job types: Spark, Streaming ETL, and Python shell
+Job properties:
+maintain the state information and prevent the reprocessing of old data.
+allows you to enable or disable the creation of CloudWatch metrics when the job runs.
+helps you define the encryption options of the ETL job.
+is the predefined worker that is allocated when a job runs.
+Standard
+G.1X (memory-intensive jobs)
+G.2X (jobs with ML transforms)
+is the maximum number of concurrent runs that are allowed for the created job. If the threshold is reached, an error will be returned.
+(minutes) is the execution time limit.
+(minutes) is set if a job runs longer than the specified time. AWS Glue will send a delay notification via Amazon CloudWatch.
+allows you to specify the number of times AWS Glue would automatically restart the job if it fails.
+and are a set of key-value pairs.
+
+
+Script
+A script allows you to extract the data from sources, transform it, and load the data into the targets.
+You can generate ETL scripts using Scala or PySpark.
+AWS Glue has a script editor that displays both the script and diagram to help you visualize the flow of your data.
+Development endpoint
+An environment that allows you to develop and test your ETL scripts.
+To create and test AWS Glue scripts, you can connect the development endpoint using:
+Apache Zeppelin notebook on your local machine
+Zeppelin notebook server in Amazon EC2 instance
+SageMaker notebook
+Terminal window
+PyCharm Python IDE
+With SageMaker notebooks, you can share development endpoints among single or multiple users.
+Single-tenancy Configuration
+Multi-tenancy Configuration
+
+
+Notebook server
+A web-based environment to run PySpark statements.
+You can use a notebook server for interactive development and testing of your ETL scripts on a development endpoint.
+SageMaker notebooks server
+Apache Zeppelin notebook server
+
+
+Trigger
+It allows you to manually or automatically start one or more crawlers or ETL jobs.
+You can define triggers based on schedule, job events, and on-demand.
+You can also use triggers to pass job parameters. If a trigger starts multiple jobs, the parameters are passed on each job.
+
+Workflows
+It helps you orchestrate ETL jobs, triggers, and crawlers.
+Workflows can be created using the AWS Management Console or AWS Glue API.
+You can visualize the components and the flow of work with a graph using the AWS Management Console.
+Jobs and crawlers can fire an event trigger within a workflow.
+By defining the default workflow run properties, you can share and manage state throughout a workflow run.
+With AWS Glue API, you can retrieve the static and dynamic view of a running workflow.
+The shows the design of the workflow. While the includes the latest run information for the jobs and crawlers. Run information shows the success status and error details.
+You can stop, repair, and resume a workflow run.
+
+Workflow restrictions:
+You can only associate a trigger in one workflow.
+When setting up a trigger, you can only have one starting trigger (on-demand or schedule).
+If a crawler or job in a workflow is started by a trigger that is the workflow, any triggers within a workflow will not fire if it depends on the crawler or job completion.
+If a crawler or job in a workflow is started the workflow, only the triggers within a workflow will fire upon the crawler or job completion.
+
+Transform
+To process your data, you can use AWS Glue built-in transforms. These transforms can be called from your ETL script.
+Enables you to manipulate your data into different formats.
+Clean your data using machine learning (ML) transforms.
+
+
+Tune transform:
+Recall vs. Precision
+Lower Cost vs. Accuracy
+With match enforcement, you can force the output to match the labels used in teaching the ML transform.
+
+Dynamic Frame
+A distributed table that supports nested data.
+A record for self-describing is designed for schema flexibility with semi-structured data.
+Each record consists of data and schema.
+You can use dynamic frames to provide a set of advanced transformations for data cleaning and ETL.
+
+
+
+Populating the AWS Glue Data Catalog
+Random Notes > AWS Glue > AWSGlueDataCatalog.png
+
+Select any custom classifiers that will run with a crawler to infer the format and schema of the data. You must provide a code for your custom classifiers and run them in the order that you specify.
+To create a schema, a custom classifier must successfully recognize the structure of your data.
+The built-in classifiers will try to recognize the data’s schema if no custom classifier matches the data’s schema.
+For a crawler to access the data stores, you need to configure the connection properties. This will allow the crawler to connect to a data store, and the inferred schema will be created for your data.
+The crawler will write metadata to the AWS Glue Data Catalog. The metadata is stored in a table definition, and the table will be written to a database.
+
+
+
+Authoring Jobs
+Random Notes > AWS Glue > AWSGlueJobs.png
+
+You need to select a data source for your job. Define the table that represents your data source in the AWS Glue Data Catalog. If the source requires a connection, you can reference the connection in your job. You can add multiple data sources by editing the script.
+Select the data target of your job or allow the job to create the target tables when it runs.
+By providing arguments for your job and generated script, you can customize the job-processing environment.
+AWS Glue can generate an initial script, but you can also edit the script if you need to add sources, targets, and transforms.
+Configure how your job is invoked. You can select on-demand, time-based schedule, or by an event.
+Based on the input, AWS Glue generates a Scala or PySpark script. You can edit the script based on your needs.
+
+
+
+Glue DataBrew
+A visual data preparation tool for cleaning and normalizing data to prepare it for analytics and machine learning.
+You can choose from over 250 pre-built transformations to automate data preparation tasks. You can automate filtering anomalies, converting data to standard formats, and correcting invalid values, and other tasks. After your data is ready, you can immediately use it for analytics and machine learning projects.
+When running profile jobs in DataBrew to auto-generate 40+ data quality statistics like column-level cardinality, numerical correlations, unique values, standard deviation, and other statistics, you can configure the size of the dataset you want analyzed.
+
+
+AWS Glue Monitoring
+Record the actions taken by the user, role, and AWS service using AWS CloudTrail.
+You can use Amazon CloudWatch Events with AWS Glue to automate the actions when an event matches a rule.
+With Amazon CloudWatch Logs, you can monitor, store, and access log files from different sources.
+You can assign a tag to crawler, job, trigger, development endpoint, and machine learning transform.
+Monitor and debug ETL jobs and Spark applications using Apache Spark web UI.
+You could view the real-time logs on the Amazon CloudWatch dashboard if you enabled continuous logging.
+
+
+AWS Glue Security
+Security configuration allows you to encrypt your data at rest using SSE-S3 and SSE-KMS.
+S3 encryption mode
+CloudWatch logs encryption mode
+Job bookmark encryption mode
+With AWS KMS keys, you can encrypt the job bookmarks and the logs generated by crawlers and ETL jobs.
+AWS Glue only supports symmetric customer master keys (CMKs).
+For data in transit, AWS provides SSL encryption.
+Managing access to resources using:
+Identity-Based Policies
+Resource-Based Policies
+You can grant cross-account access in AWS Glue using the Data Catalog resource policy and IAM role.
+Data Catalog Encryption:
+Metadata encryption
+Encrypt connection passwords
+You can create a policy for the data catalog to define fine-grained access control.
+
+
+AWS Glue Pricing
+You are charged at an hourly rate based on the number of DPUs used to run your ETL job.
+AWS Exam Readiness Courses
+You are charged at an hourly rate based on the number of DPUs used to run your crawler.
+Data Catalog storage and requests:
+You will be charged per month if you store more than a million objects.
+You will be charged per month if you exceed a million requests in a month.
