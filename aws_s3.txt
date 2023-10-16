@@ -1,0 +1,36 @@
+Amazon S3
+
+
+S3 stores data as objects within buckets.
+An object consists of a file and optionally any metadata that describes that file.
+A key is a unique identifier for an object within a bucket.
+Storage capacity is virtually unlimited.
+
+
+Buckets
+
+For each bucket, you can:
+Control access to it (create, delete, and list objects in the bucket)
+View access logs for it and its objects
+Choose the geographical region where to store the bucket and its contents.
+Bucket name must be a unique DNS-compliant name.
+The name must be unique across all existing bucket names in Amazon S3.
+After you create the bucket you cannot change the name.
+The bucket name is visible in the URL that points to the objects that you’re going to put in your bucket.
+By default, you can create up to 100 buckets in each of your AWS accounts.
+You can’t change its Region after creation.
+You can host static websites by configuring your bucket for website hosting.
+You can’t delete an S3 bucket using the Amazon S3 console if the bucket contains 100,000 or more objects. You can’t delete an S3 bucket using the AWS CLI if versioning is enabled.
+
+
+
+
+Data Consistency Model
+
+read-after-write consistency for PUTS of new objects in your S3 bucket in all regions
+strong consistency for read-after-write HEAD or GET requests
+strong consistency for overwrite PUTS and DELETES in all regions
+strong read-after-write consistency for any storage request
+eventual consistency for listing all buckets after deleting a bucket (deleted bucket might still show up)
+eventual consistency on propagation of enabling versioning on a bucket for the first time.
+
