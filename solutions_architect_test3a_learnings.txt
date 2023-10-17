@@ -81,4 +81,33 @@ RDS Storage Auto Scaling continuously monitors actual storage consumption, and s
 9.The Reserved Instance Marketplace is a platform that supports the sale of third-party and AWS customers' unused Standard Reserved Instances, which vary in terms of lengths and pricing options. For example, you may want to sell Reserved Instances after moving instances to a new AWS region, changing to a new instance type, ending projects before the term expiration, when your business needs change, or if you have unneeded capacity.
 Take note that when a Reserved Instance expires, any instances that were covered by the Reserved Instance are billed at the on-demand price which costs significantly higher. Since the application is already decommissioned, there is no point of keeping the unused instances. It is also possible that there are associated Elastic IP addresses, which will incur charges if they are associated with stopped instances
 
-10.opp44
+10.https://wyag.thb.ltYou can associate the CreationPolicy attribute with a resource to prevent its status from reaching create complete until AWS CloudFormation receives a specified number of success signals or the timeout period is exceeded. To signal a resource, you can use the cfn-signal helper script or SignalResource API. AWS CloudFormation publishes valid signals to the stack events so that you track the number of signals sent.
+
+The creation policy is invoked only when AWS CloudFormation creates the associated resource. Currently, the only AWS CloudFormation resources that support creation policies are AWS::AutoScaling::AutoScalingGroup, AWS::EC2::Instance, and AWS::CloudFormation::WaitCondition.
+
+Use the CreationPolicy attribute when you want to wait on resource configuration actions before stack creation proceeds. For example, if you install and configure software applications on an EC2 instance, you might want those applications to be running before proceeding. In such cases, you can add a CreationPolicy attribute to the instance and then send a success signal to the instance after the applications are installed and configured.
+
+the cfn-init helper script is not suitable to be used to signal another resource. You have to use cfn-signal instead. And although you can use the DependsOn attribute to ensure the creation of a specific resource follows another, it is still better to use the CreationPolicy attribute instead as it ensures that the applications are properly running before the stack creation proceeds.
+
+11. the vCPU-based On-Demand Instance limit is set per region and not per Availability Zone. This can be increased after submitting a request form to AWS.
+
+12. The AWS Systems Manager OpsCenter is just one of the capabilities of the AWS Systems manager, and it is not meant as a datastore of key value. This service is not recommended for storing encrypted application parameters.
+
+Yes, that is correct. Secrets Manager and Parameter Store are both AWS services that can be used to store sensitive data, but they have different strengths and weaknesses.
+
+Secrets Manager is designed for storing secrets, such as passwords, database credentials, and API keys. It encrypts secrets using AWS Key Management Service (KMS) and provides a number of features for managing secrets, such as automatic rotation and auditing. However, Secrets Manager is a paid service, and there is a cost associated with storing secrets.
+
+Parameter Store is a free service that can be used to store application parameters, such as configuration settings and environment variables. It does not encrypt parameters by default, but you can encrypt them using KMS. Parameter Store is a good choice for storing application parameters that are not sensitive, but it is not as secure as Secrets Manager.
+
+In general, you should use Secrets Manager for storing sensitive data and Parameter Store for storing non-sensitive data. However, there are some cases where you might want to use Parameter Store for sensitive data, such as when you need to store a large number of secrets and the cost of Secrets Manager is prohibitive.
+
+
+13.Adding a Subject Alternative Name (SAN) for each additional domain to your certificate is incorrect because although using SAN is correct, you will still have to reauthenticate and reprovision your certificate every time you add a new domain. One of the requirements in the scenario is that you should not have to reauthenticate and reprovision your certificate hence, this solution is incorrect.
+
+ Create a new CloudFront web distribution and configure it to serve HTTPS requests using dedicated IP addresses in order to associate your alternate domain names with a dedicated IP address in each CloudFront edge location is incorrect because although it is valid to use dedicated IP addresses to meet this requirement, this solution is not cost-effective. Remember that if you configure CloudFront to serve HTTPS requests using dedicated IP addresses, you incur an additional monthly charge. The charge begins when you associate your SSL/TLS certificate with your CloudFront distribution. You can just simply upload the certificates to the ALB and use SNI to handle multiple domains in a cost-effective manner.
+
+Using a wildcard certificate to handle multiple sub-domains and different domains is incorrect because a wildcard certificate can only handle multiple sub-domains but not different domains.
+
+
+
+
