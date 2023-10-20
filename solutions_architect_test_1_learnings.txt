@@ -1,1 +1,154 @@
 Test1
+
+1.AWS Snowcone: Up to 8 terabytes (TB).
+AWS Snowball: Up to 80 terabytes (TB).
+AWS Snowmobile: Up to 100 petabytes (PB) per shipment.
+
+the two types of AWS Snowball devices with their respective data storage capacities:
+
+AWS Snowball Edge: Up to 80 terabytes (TB) of storage.
+AWS Snowball: Also up to 80 terabytes (TB) of storage.
+Both Snowball and Snowball Edge provide high-capacity data transfer options, and Snowball Edge additionally offers built-in computing capabilities for edge computing tasks.
+
+
+2. To prevent your API from being overwhelmed by too many requests, Amazon API Gateway throttles requests to your API using the token bucket algorithm, where a token counts for a request. Specifically, API Gateway sets a limit on a steady-state rate and a burst of request submissions against all APIs in your account. In the token bucket algorithm, the burst is the maximum bucket size.
+
+
+In the context of Amazon API Gateway and the token bucket algorithm:
+
+A "token" is like a permission slip that a client (a program or device making requests to an API) needs to have in order to make a request to the API.
+The token bucket represents the total available permissions or tokens at any given time.
+Here's how it works:
+
+API Gateway sets two key limits:
+
+Steady-State Rate: This is the maximum number of requests allowed per second in a continuous, steady manner. It's like the rate at which tokens are added to the bucket.
+Burst Limit: This is the maximum bucket size, which defines the maximum number of tokens (permissions) that can be available in the bucket at any time.
+When a client makes a request to the API, it needs to "spend" one token from the bucket. If there are enough tokens in the bucket, the request is allowed. If not, the request is delayed until there are enough tokens.
+
+Over time, the bucket can accumulate tokens (permissions) back up to the burst limit. This means that if requests are made less frequently than the steady-state rate, the unused tokens accumulate, allowing for occasional bursts of requests.
+
+Amazon SQS - Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. Amazon SQS offers buffer capabilities to smooth out temporary volume spikes without losing messages or increasing latency.
+
+Amazon Kinesis - Amazon Kinesis is a fully managed, scalable service that can ingest, buffer, and process streaming data in real-time.
+
+
+3.With Amazon EFS, you pay only for the resources that you use. The EFS Standard Storage pricing is $0.30 per GB per month. Therefore the cost for storing the test file on EFS is $0.30 for the month.
+
+For EBS General Purpose SSD (gp2) volumes, the charges are $0.10 per GB-month of provisioned storage. Therefore, for a provisioned storage of 100GB for this use-case, the monthly cost on EBS is $0.10*100 = $10. This cost is irrespective of how much storage is actually consumed by the test file.
+
+For S3 Standard storage, the pricing is $0.023 per GB per month. Therefore, the monthly storage cost on S3 for the test file is $0.023.
+
+
+4.For user or team file shares, and file-based application migrations, Amazon FSx File Gateway provides low-latency, on-premises access to fully managed file shares in Amazon FSx for Windows File Server. For applications deployed on AWS, you may access your file shares directly from Amazon FSx in AWS.
+
+For your native Windows workloads and users, or your SMB clients, Amazon FSx for Windows File Server provides all of the benefits of a native Windows SMB environment that is fully managed and secured and scaled like any other AWS service. You get detailed reporting, replication, backup, failover, and support for native Windows tools like DFS and Active Directory
+
+5. Global Accelerator is a good fit for non-HTTP use cases, such as gaming (UDP), IoT (MQTT), or Voice over IP, as well as for HTTP use cases that specifically require static IP addresses or deterministic, fast regional failover. Since CloudFront is better for improving application resiliency to handle spikes in traffic, so this option is ruled out.
+
+
+6.An Auto Scaling group cannot directly use a Cloudwatch alarm as the source for a scale-in or scale-out event
+
+
+7.If your organization has multiple AWS accounts, then you can subscribe multiple AWS Accounts to AWS Shield Advanced by individually enabling it on each account using the AWS Management Console or API. You will pay the monthly fee once as long as the AWS accounts are all under a single consolidated billing, and you own all the AWS accounts and resources in those accounts.
+
+If your organization has multiple AWS accounts that are all under a single consolidated billing, you will only have to pay the monthly fee for AWS Shield Advanced once, even if you enable it on multiple accounts. This is because AWS Shield Advanced is a regional service, and the monthly fee covers all of the accounts in the region.
+
+So, if you have multiple AWS accounts in the same region, you can enable AWS Shield Advanced on all of them and only pay the monthly fee once. This is a great way to save money and protect all of your AWS resources from DDoS attacks.
+
+
+AWS accounts are also regional. When you create an AWS account, you must specify a region for the account. This region is where your account's resources will be located by default. You can also create resources in other regions, but you will need to specify the region when you create the resource.
+
+The region that you choose for your AWS account is important because it affects the latency and availability of your resources. For example, if you choose a region that is far away from your users, then your users may experience higher latency when accessing your resources. Additionally, if you choose a region that is prone to natural disasters, then your resources may be more likely to be unavailable during those disasters.
+
+
+8.Dynamic content, as determined at request time (cache-behavior configured to forward all headers), does not flow through regional edge caches, but goes directly to the origin. So this option is correct.
+Proxy methods PUT/POST/PATCH/OPTIONS/DELETE go directly to the origin from the POPs and do not proxy through the regional edge caches.
+
+9.KDS provides ordering of records, as well as the ability to read and/or replay records in the same order to multiple Amazon Kinesis Applications.
+
+10.
+Yes, DAX effectively makes DynamoDB an in-memory database for read-intensive workloads. By storing a portion of DynamoDB data in memory, DAX significantly improves the performance of read operations, reducing read latencies from milliseconds to microseconds.
+
+However, it's important to note that DAX doesn't replace DynamoDB entirely. DynamoDB still serves as the primary data store, while DAX acts as a caching layer to accelerate read operations. This means that writes still go directly to DynamoDB, and DAX maintains eventual consistency with DynamoDB.
+
+11. Versioning is a means of keeping multiple variants of an object in the same bucket. You can use versioning to preserve, retrieve, and restore every version of every object stored in your Amazon S3 bucket. Versioning-enabled buckets enable you to recover objects from accidental deletion or overwrite.
+
+12. Spot blocks can only be used for a span of up to 6 hours, so this option does not meet the requirements of the given use case where the dev application can be up and running up to 8 hours
+
+
+13.
+Yes, that's correct. When versioning is enabled for an S3 bucket, deleting an object doesn't actually remove the object's data from the bucket. Instead, it creates a special marker called a "delete marker." This delete marker indicates that the object is considered deleted, but the previous versions of the object are still preserved in the bucket.
+
+This mechanism allows you to recover accidentally deleted objects or restore previous versions if needed. For instance, if you realize that you've deleted an object by mistake, you can simply remove the delete marker, and the latest version of the object will become accessible again.
+
+
+S3 versioning and deletion process
+
+In this example, there are three versions of an object named "myfile.txt":
+Version 1: The original version of the file
+Version 2: A modified version of the file
+Version 3: The latest version of the file
+
+When a delete request is issued for "myfile.txt," S3 doesn't remove the actual data of the file. Instead, it creates a delete marker, which is essentially a placeholder indicating that the latest version (Version 3) is considered deleted. However, the previous versions (Version 1 and Version 2) remain intact in the bucket.
+This means that you can still access the previous versions of the file even after the latest version is marked as deleted. If you want to restore the latest version, you can simply remove the delete marker, and Version 3 will become the current version again.
+Versioning provides a safety net against accidental deletions and allows you to maintain a history of changes to your objects. It's particularly useful for critical data where you need the ability to recover from unintentional deletions or revert to earlier versions.
+
+
+14.Site-to-site VPN cannot provide low latency and high throughput connection, therefore this option is ruled out. --In comparison to direct connect.
+
+15. Geo Restriction feature of CloudFront helps in restricting traffic based on the user's geographic location. But, CloudFront works from edge locations and doesn't belong to a VPC.
+
+16.You can use AWS WAF with your Application Load Balancer to allow or block requests based on the rules in a web access control list (web ACL). Geographic (Geo) Match Conditions in AWS WAF allows you to use AWS WAF to restrict application access based on the geographic location of your viewers. With geo match conditions you can choose the countries from which AWS WAF should allow access.
+
+17.You can use AWS WAF with your Application Load Balancer to allow or block requests based on the rules in a web access control list (web ACL). Geographic (Geo) Match Conditions in AWS WAF allows you to use AWS WAF to restrict application access based on the geographic location of your viewers. With geo match conditions you can choose the countries from which AWS WAF should allow access.
+
+
+
+18.Amazon FSx for Lustre makes it easy and cost-effective to launch and run the world’s most popular high-performance file system. It is used for workloads such as machine learning, high-performance computing (HPC), video processing, and financial modeling. The open-source Lustre file system is designed for applications that require fast storage – where you want your storage to keep up with your compute. FSx for Lustre integrates with Amazon S3, making it easy to process data sets with the Lustre file system. When linked to an S3 bucket, an FSx for Lustre file system transparently presents S3 objects as files and allows you to write changed data back to S3.
+
+FSx for Lustre provides the ability to both process the 'hot data' in a parallel and distributed fashion as well as easily store the 'cold data' on Amazon S3. Therefore this option is the BEST fit for the given problem statement.
+
+Amazon FSx for Windows File Server provides fully managed, highly reliable file storage that is accessible over the industry-standard Service Message Block (SMB) protocol. It is built on Windows Server, delivering a wide range of administrative features such as user quotas, end-user file restore, and Microsoft Active Directory (AD) integration. FSx for Windows does not allow you to present S3 objects as files and does not allow you to write changed data back to S3. Therefore you cannot reference the "cold data" with quick access for reads and updates at low cost.
+
+ EMR does not offer the same storage and processing speed as FSx for Lustre. So it is not the right fit for the given high-performance workflow scenario.
+
+ AWS Glue is a fully managed extract, transform, and load (ETL) service that makes it easy for customers to prepare and load their data for analytics. AWS Glue job is meant to be used for batch ETL data processing. AWS Glue does not offer the same storage and processing speed as FSx for Lustre.
+
+
+
+
+Feature          	KMS Customer Managed CMKs            	SSE-C
+
+Key management responsibility	Full lifecycle management	Key generation, storage, security
+Integration with AWS services	Tightly integrated	Primarily for S3 encryption
+Additional features	Audit logging, usage tracking, CloudTrail integration	Focused on S3 encryption
+Ease of use	Centralized management console and APIs	Independent key management
+
+19.Amazon CloudFront uses standard cache control headers you set on your files to identify static and dynamic content. You can use different origins for different types of content on a single site – e.g. Amazon S3 for static objects, Amazon EC2 for dynamic content, and custom origins for third-party content.
+
+
+20.GuardDuty analyzes tens of billions of events across multiple AWS data sources, such as AWS CloudTrail events, Amazon VPC Flow Logs, and DNS logs.
+
+With a few clicks in the AWS Management Console, GuardDuty can be enabled with no software or hardware to deploy or maintain. By integrating with Amazon EventBridge Events, GuardDuty alerts are actionable, easy to aggregate across multiple accounts, and straightforward to push into existing event management and workflow systems.
+
+21. Transfer Acceleration takes advantage of Amazon CloudFront’s globally distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimized network path.
+ In general, when your object size reaches 100 MB, you should consider using multipart uploads instead of uploading the object in a single operation. Multipart upload provides improved throughput - you can upload parts in parallel to improve throughput. Therefore, this option is not correct.
+
+22.Once you version-enable a bucket, it can never return to an unversioned state. Versioning can only be suspended once it has been enabled.
+
+23.Amazon API Gateway is a fully managed service that allows you to publish, maintain, monitor, and secure APIs at any scale. Amazon API Gateway offers two options to create RESTful APIs, HTTP APIs and REST APIs, as well as an option to create WebSocket APIs.
+
+For the given use case, you can use Amazon API Gateway to create a REST API that handles incoming requests having location data from the trucks and sends it to the Kinesis Data Analytics application on the back end.
+
+QuickSight is a cloud-native, serverless business intelligence service. Quicksight cannot be used to build a REST API to consume data from the source. Redshift is a fully managed AWS cloud data warehouse.
+
+
+
+
+24.Amazon Simple Storage Service (Amazon S3) is an object storage service that offers industry-leading scalability, data availability, security, and performance. Your applications can easily achieve thousands of transactions per second in request performance when uploading and retrieving storage from Amazon S3. Amazon S3 automatically scales to high request rates. For example, your application can achieve at least 3,500 PUT/COPY/POST/DELETE or 5,500 GET/HEAD requests per second per prefix in a bucket.
+
+There are no limits to the number of prefixes in a bucket. You can increase your read or write performance by parallelizing reads. For example, if you create 10 prefixes in an Amazon S3 bucket to parallelize reads, you could scale your read performance to 55,000 read requests per second. Please see this example for more clarity on prefixes: if you have a file f1 stored in an S3 object path like so s3://your_bucket_name/folder1/sub_folder_1/f1, then /folder1/sub_folder_1/ becomes the prefix for file f1.
+
+Some data lake applications on Amazon S3 scan millions or billions of objects for queries that run over petabytes of data. These data lake applications achieve single-instance transfer rates that maximize the network interface used for their Amazon EC2 instance, which can be up to 100 Gb/s on a single instance. These applications then aggregate throughput across multiple instances to get multiple terabits per second. Therefore creating customer-specific custom prefixes within the single bucket and then uploading the daily files into those prefixed locations is the BEST solution for the given constraints.
+
