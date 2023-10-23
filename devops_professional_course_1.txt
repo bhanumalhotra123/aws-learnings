@@ -1,0 +1,68 @@
+CICD Intro
+
+We will learn about:
+
+AWS Code Commit
+AWS Code Pipeline
+AWS Code Build
+AWS Code Deploy
+AWS Code Star
+AWS Code Artifact
+AWS Code Guru
+
+
+Continous Integration:
+Developers push the code to a code repository often ( eg- Github, CodeCommit, Bitbucket)
+
+A testing/ build server checks the code as soon as it is published ( CodeBuild, Jenkins CI etc)
+
+The developer gets feedback about the tests and checks that have passed/failed.
+
+  Find bugs early, then fix bugs
+
+Deliver faster as the code is tested
+
+Deploy often
+
+Happier developers, as they're unblocked.
+
+
+Continous Delivery:
+
+Ensures that the software can be released reliably whenever needded.
+Ensures deployments happen often and are quick.
+Shift away from "one release every 3 months" to "5 releases a day"
+That usually means automated deployment(CodeDeploy[EC2 Instances, On-premises Instances, AWS Lambda, Amazon ECS], JenkinsCD etc) 
+
+
+Code[CodeCommit]   Build&Test[AWS CodeBuild]  Deploy[AWS CodeDeploy OR AWS Elastic Beanstalk]
+
+
+Orchestrate using AWS Code Pipeline
+
+
+AWS CodeCommit
+
+Version Control is the ability to understand the various changes that happenedd to the code over time (and possibly roll back)
+All these are enabled by using a version control system such as Git
+A git repository can be synchronized on your computer, but it usually is uploaded on a central online repository.
+
+Benefits are:
+Collabrate with other developers
+Make sure the code is backed-up somewhere
+Make sure it is fully viewable and auditable.
+
+
+Why codecommit?
+
+Git repositories can be expensive
+
+Using AWS CodeCommit:
+  Private Git repositories (Code lives and stays within your VPC)
+  No size limit on repositories
+  Code Only in AWS Cloud account [Increased Security and compliance.
+
+
+  
+
+
