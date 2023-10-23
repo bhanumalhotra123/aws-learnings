@@ -60,7 +60,46 @@ Git repositories can be expensive
 Using AWS CodeCommit:
   Private Git repositories (Code lives and stays within your VPC)
   No size limit on repositories
+  Fully Managed and highly available
   Code Only in AWS Cloud account [Increased Security and compliance.
+  Security(encrypted, access control)
+     Interactions are done using Git (standard)
+     Authentication
+        SSH Keys AWS Users can configure SSH keys in their IAM Console
+        HTTPS with AWS CLI Credential helper or Git Credentials for IAM user
+     Authorization
+        IAM policies to manage users/roles to repositories
+     Encryption
+         Repositories are automatically encrypted at rest using AWS KMS
+         Encrypted in transit (can only use HTTPS or SSH - both secure)
+     Cross-account Access
+         Do not share your SSH keys or your AWS credentials
+         Use an IAM Role in your AWS account and use AWS STS (AssumeRole API)
+
+
+Go to console > Search for codecommit> Create Repositories 
+
+
+    We are greeted with connections steps:
+Optionns are: HTTPS, SSH, HTTPS(GRC)
+If you are using root you won't see SSH
+
+you can add your files
+
+
+In settings section > Notification > Create notification rule > Select events that happens on codecommit repo> Target ( select SNS topic or create it ) 
+
+
+In notification section only create trigger
+
+events 
+service you want to trigger > SNS or Lambda
+
+
+
+How to do this programmaticaly?
+
+
 
 
   
