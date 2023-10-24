@@ -97,7 +97,119 @@ service you want to trigger > SNS or Lambda
 
 
 
-How to do this programmaticaly?
+How to do this programmaticaly? Uploading code to codecommit without using the options 'create file' and 'upload file' options on console'
+
+Go to IAM
+
+Users > Security Credentials > Here you have the option of SSH keys for AWS CodeCommit, HTTPS Git credentials for AWS Code Commit [earlier you have used this section for access keys]
+
+In SSH keys section you can upload your keys
+
+Now going back to your repo
+
+clone URL> Clone SSH
+copy the URL you get
+
+If in case you don't know how to work with SSH you can use HTTPS option > Generate
+
+now clone URL > clone HTTPS
+
+
+Install git
+git clone https
+give username and passsword
+
+add the files you want to 
+
+git add .
+git commit -m""
+git push 
+
+Now go and check codecommit, you can see new files there.
+
+
+You can monitor any kind of events in CodeCommit using EventBridge(near realtime)
+ex - pullRequestCreated, pullRequestStatusChanged etc
+
+
+CodeCommit --> EventBridge --> SNS,Lambda,CodePipeline
+
+
+
+How to migrate Git Repository to CodeCommit?
+
+You can migrate a project hosted on another Git repository (example - Github, GitLab) to CodeCommit repo.
+1. Create CodeCommit Repo
+2. Do git clone from git server to bring everything on local
+3. Push it to the URL where you want to (CodeCommit)
+
+
+
+CodeCommit [Cross-Region Replication]
+
+Use Case: Achieve lower latency pulls for global developers, backups
+Say from us-east-1 to eu-west-2
+
+Developer ---> CodeCommit(Repository_A) --event-> EventBridge --Invoke--> ECS Task (do git clone from current region)--> git remote set-url --push origin https://git-codecommit.eu-west-2.amazonaws.com/v1/repos/Repository_B  
+
+
+
+What about branch protection?
+
+By default, a user who has push permissions to a CodeCommit repository can contribute to any branch.
+
+Use IAM policies to restrict users to push or merge code to a specific branch
+
+Example: Only senior developers can push to production branch
+
+Attach IAM Policy which have deny effect to actions such as GitPush, DeleteBranch, PutFile, MergeBranchesByFastForward etc.. on resource 'repo' with conditions as codecommit:References: {refs/heads/main, refs/head/prod}
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Deny",
+            "Action": [
+                "codecommit:GitPush",
+                "codecommit:DeleteBranch",
+                "codecommit:PutFile",
+                "codecommit:MergeBranchesByFastForward"
+            ],
+            "Resource": "arn:aws:codecommit:REGION:ACCOUNT-ID:REPO-NAME",
+            "Condition": {
+                "StringEqualsIfExists": {
+                    "codecommit:References": [
+                        "refs/heads/main",
+                        "refs/heads/prod"
+                    ]
+                }
+            }
+        }
+    ]
+}
+
+
+
+
+CodeCommit Pull Request Approval Rules
+
+Helps ensure the quality of your code by requiring users to approve the open PRs before the codecan be merged.
+
+Specify a pool of users to approve and number of users who must approve the PR.
+Specify IAM Principal ARN (IAM usrs, federated users, IAM Roles, IAM Groups)
+
+Approval Rule Templates:
+Automatically apply Approval Rules to PRs in specific repositories
+Example: define different rules for dev and prod branches.
+
+
+
+
+
+
+
+
 
 
 
