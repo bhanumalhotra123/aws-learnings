@@ -1,0 +1,158 @@
+Infrastructure as code
+
+  Cloud Formation
+Declarative programming(no need to figure out ordering and orchestration)
+
+ create template 
+  It gives you everything in correct order
+
+  Version control using git
+
+Seperation of concern: Create many stacks for many apps and many layers
+Ex: 
+  VPC stacks
+  Network stacks
+  App stacks
+
+
+  Each time we create ElasticBeanstalk, it creates cloudformation template behind the scenes.
+
+Don't re-invent
+    Leverage existing templates on web
+    Leverage the documentation
+
+Templates have to be uploaded in S3 and then referenced in CloudFormation.
+To update a template we can't edit previous ones. We have to re-upload a new version of the template to AWS.
+
+Stacks are identified by a name.
+Deleting a stack deletes every single artifact that was created by CloudFormation
+
+
+Manual way:
+    Edit templates in the CloudFormation Designer.
+    Using the console to input parameters, etc.
+Automated way:
+    Edit templates in a YAML file
+    Using the AWS CLI to deploy the templates
+    Recommended way when you fully want to automate your flow.
+
+
+
+CloudFormation Building Blocks.
+    Templates components 
+    1. Resources: your AWS resources declared in the template(MANDATORY)
+    2. Parameters: the dynamic inputs for your template
+    3. Mappings: the static variables for your template
+    4. Outputs: References to what has been created
+    5. Conditionals: List of conditions to perform resource creation
+    6. Metadata
+
+    Template helpers:
+    1. References
+    2. Functions
+
+
+Introductory Example:
+1. Create a EC2 instance
+2. Create and add and Elastic IP to it.
+3. Add two security groups to it.
+
+  
+Go to cloudformation > Set N.Virginia for now.
+
+>Create Stack > With new resources? OR With existing resoures
+
+  > Template is ready OR Use a sample template OR Create template in Designer.
+
+  Choose a file
+  Give a stack name
+
+  You get to review
+  Create Stack 
+
+  Under the Events tab
+  You can see things are getting initiated.
+
+  You can check on specific resource  by going to its console.
+  Or you can go to resources tab and have links there.
+
+
+
+  ---
+  Resources:
+    MyInstance:
+      Type: AWS::EC2::Instances
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-a4c7edb 
+        InstanceType: t2.micro
+
+
+
+          Now assume we want to use the following template: Instead of the one mentioned above that we had used for the previous setup.
+
+  ---
+    Parameters:
+      SecurityGroupDescription:
+         Description: Security Group Description
+         Type: String
+
+    Resources:
+      MyInstance:
+      Type: AWS::EC2::Instances
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-a4c7edb 
+        InstanceType: t2.micro
+        SecurityGroups:
+          - !Ref SSHSecurityGroup
+          - !Ref ServerSecurityGroup
+
+      MyEIP:
+        Type: AWS::EC2::EIP
+        Properties:
+          InstanceId: !Ref MyInstance
+
+      SSHSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupDescription: Enable SSH access via port 22
+          SecurityGroupIngress:
+          - CidrIP: 0.0.0.0/0
+            FromPort: 22
+            IpProtocol: tcp
+            ToPort: 22
+
+     ServiceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 80    
+            ToPort: 80
+            CidrIP: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: 22
+            ToPort: 22
+            CidrIp: 192.168.1.1/32
+
+Select the stack you created > Update
+              Use Current template OR Replace current template OR Edit template in designer
+
+Go for Replace current template > Upload a template         
+
+click on next: Now you will be prompted to give the value of the parameter you had:
+
+SecurityGroupDescription: 
+Enter whatever you want and go next
+
+Change Set Review
+  It tells you the differences, like eip will be edded , instance will be modified (it shows wether it will be replaced or not) and so on.
+ Next
+
+  In events you will see update in  progress.
+              
+Doesn't matter whatever order you had given
+            
+         
+
