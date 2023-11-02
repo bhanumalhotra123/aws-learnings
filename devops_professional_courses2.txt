@@ -126,6 +126,7 @@ Go to cloudformation > Set N.Virginia for now.
      ServiceSecurityGroup:
         Type: AWS::EC2::SecurityGroup
         Properties:
+          GroupDescription: !Ref SecurityGroupDescription
           SecurityGroupIngress:
           - IpProtocol: tcp
             FromPort: 80    
@@ -218,6 +219,166 @@ You can work around that  using aws lambda custom resources.
 
 
        
+
+
+What are parameters?
+
+Parameters are a way to provide inputs to your AWS CloudFormation template
+
+They are imp to know about if:
+  You want to reuse your templates across the company
+  Some inputs can not be determined ahead of time.
+
+Parameters are extremely powerful, controlled and can prevent errors
+
+
+ASK yourself:
+ Is this CloudFormation resource config likely to change in the future?
+ If so, make it a paramter.
+
+Parameters can be controlled by all these settings:
+
+Type:
+    String
+    Number
+    CommaDelimitedList
+    List<Type>
+    AWS Parameter(to help catch invalid values - match against existing values in the AWS Account)
+Description
+Constraints
+ConstraintDescription
+Min/MaxLength
+Min/Max Value
+Defaults
+AllowedValues(array)
+AllowedPattern(regexp)
+NoEcho(Boolean)
+
+
+
+How do you Reference a Parameter?
+The Fn::Ref function can be leveraged to reference parameters
+Parameters can be used anywhere in a template.
+The shorthand for this in YAML is !Ref
+
+DSubnet1:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref MyVPC
+
+
+Pseudo Parameters
+AWS offers us pseudo parameters in any CloudFormation template
+These can be used at any time and are enabled by default.
+
+AWS:AccountId
+AWS:NotificationARNs
+AWS:NoValue
+AWS:Region
+AWS:StackId
+AWS:StackName
+
+
+
+
+What are mappings?
+
+Mappings are fixed variables within your CloudFormation Template
+They're very handy to differentiate b/w diff envs, regions, AMI types etc
+Example:
+
+Mappings:
+  Mapping01:
+    Key01:
+      Name: Value01
+    Key02:
+      Name: Value02
+    Key03: 
+      Name: Value03
+
+RegionMaps:
+  us-east-1:
+    "32": "ami-6411e20d"
+    "64": "ami-7a11e213"
+  us-west-1:
+     "32": "ami-c9c7978c"
+     "64": "ami-cfc7978a"
+
+
+Mapping VS Parameters
+
+M: When you know all values in advance
+such as Region, AZ, AWS Account, env, etc...
+
+They allow safer control over the template.
+
+
+Use parameters when the values are really user specific.
+
+
+
+Accessing maping values:
+We use Fn::FindMap to return a named value from a specific key.
+
+!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]
+
+  
+
+AWSTemplateFormatVersion: "2010-09-09"
+Mappings:
+  RegionMaps:
+  us-east-1:
+    "32": "ami-6411e20d"
+    "64": "ami-7a11e213"
+  us-west-1:
+     "32": "ami-c9c7978c"
+     "64": "ami-cfc7978a"
+Resources:
+  myEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+    ImageId: !FindMap [RegionMap, !Ref "AWS::Region", 32]
+
+
+
+
+
+What are outputs?
+The outputs section declares optional outputs values that we can import into other stacks(if you export them first)!
+
+You can also view the outputs in  the AWS Console or in using the AWS CLI
+They're very useful for example if you define a network CloudFormation, and output the variables such as VPC ID and your Subnet IDs.
+
+It is the best way to perform collaboration cross stack, as you let expert handle their own part of the stack.
+
+
+You can't delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation Stack.
+
+
+Example:
+
+Outputs:
+  StackSSHSecurityGroup:
+  Description: The SSH Security Group for our Company
+  Value: !Ref MyCompanyWideSSHSecurityGroup
+  Export: 
+    Name: SSHSecurityGroup           #the StackSSHSecurityGroup will be exported with the name SSHSecurityGroup
+
+
+We then create a second template that leverages that security group.
+For this we use the Fn::ImportValue function
+You can't delete the underlying stack until all references are delted too.
+
+
+     Resources:
+      MyInstance:
+      Type: AWS::EC2::Instances
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-a4c7edb 
+        InstanceType: t2.micro
+        SecurityGroups:
+          - !ImportValue SSHSecurityGroup
 
 
 
