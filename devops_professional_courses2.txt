@@ -924,3 +924,403 @@ By this way you can't delete the stack without changing it to Disable
 
 
 
+
+
+
+User Data in EC2 for CloudFormation
+
+Let's learn how to write the same EC2 user-data script in our CloudFormation template
+
+The important thing to pass is the entire script through the function Fn::Base64
+
+Good to know, user data script log is in /var/log/cloud-init-output.log 
+
+
+
+
+
+
+Let's see how to do it in cloudformation
+
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 key pair for SSH access to the EC2 instance.
+    Type: AWS::EC2::KeyPair::KeyName
+
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+      UserData:
+        Fn::Base64: |                               --------> Multiline string(all of the following has to be passed as Base64)
+           #!/bin/bash
+           yum update -y
+           amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+           yum install -y httpd mariadb-server
+           systemctl start httpd
+           systemctl enable httpd
+           usermod -a -G apache ec2-user
+           chown -R ec2-user:apache /var/www
+           chmod 2775 /var/www
+           find /var/www -type d -exec sudo chmod 2775 {} \;
+           find /var/www -type f -exec sudo chmod 0664 {} \;
+           echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
+
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Enable HTTP access via port 80 + SSH access"
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
+      - CidrIp: !Ref SSHLocation
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+
+
+Login to the machine created 
+cat /var/log/cloud-init-output.log
+
+
+
+
+
+It is possible that your userdata hasn't run completely on your machine but still your
+
+events in stacks shows that it has completed the user-data.
+
+
+
+
+
+
+The problem with EC2 User Data
+
+What if we want to have a very large instance configuration?
+What if we want to evolve the state of the EC2 instance without terminating it and creating a new one?
+How do we make EC2 user-data more readable?
+How do we know or signal that our EC2 user-data script completed successfully?
+
+
+Enter CloudFormation Helper Scripts
+
+We have 4 python scripts, that come directly on Amazon Linux 2 AMI, or can be installed using yum on non-Amazon Linux AMIs
+ 1. cfn-init Used to retrieve and interpret the resource metadata, installing packages, creating files and startin services.
+ 2. cfn-signal A simple wrapper to signal with a CreationPolicy or WaitCondition, enabling you to synchronize other resources in the stack with application being ready.
+ 3. cfn-get-megadata A wrapper script making it easy to retrieve either all metadata defined for a resource or path to a specific key or subtree of the resource metadata.
+ 4.cfn-hup A daemon to check for updates to the metadata and execute custom hooks when the changes are detected.
+
+
+Usual flow: cfn-init, then cfn-signal, then optionally cfn-hup 
+
+
+
+AWS::CloudFormation::Init
+
+
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+             :
+          groups:
+             :
+          users:
+             :
+          sources:
+             :
+          files:
+             :
+          commands:
+             :
+          services:
+             :
+    Properties:
+      :
+
+
+
+A config contains the following and is executed in that order:
+Packages: Used to download and install pre-packages apps and components on Linux/Windows(ex. MySQL,PHP,etc...)
+Groups: define user groups
+Users: define users, and which group they belong to
+Sources: download files and archives and place them on the EC2 instance
+Files: create files on the EC2 instance,  using inline or can be pulled from a URL
+
+
+You can have multiple configs in your AWS::CloudFormation::Init
+You create configSets with mulitple configs
+And you invoke configSets from your EC2 user-data
+
+
+
+
+cfn-init 
+
+With the cfn-init script, it helps make complex EC2 configurations readable
+
+AWS CloudFormation launch EC2 instance
+The EC2 instance will query the CloudFormation service to get init data and then runs cfn-init
+
+Logs go to /var/log/cfn-init.log
+
+
+Once we run cfn-init we still don't know how to tell CloudFormation that EC2 instance got properly configured after a cfn-init 
+
+For this, we can use the cfn-signal script!
+> We run cfn-signal right after cfn-init
+> Tell CloudFormation service that the resource creation success/fail to keep on going or fail
+
+We need to define WaitCondition:
+> Block the template until it receives a signal from cfn-signal
+> We attach a CreationPolicy (also works on EC2, ASG)
+> We can define a Count > 1 (in case you need more than 1 signal )
+
+
+
+
+
+
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Sample Template for CFN Init
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  MyS3BucketName:
+    Description: Name of an existing bucket to download files from
+    Type: String
+
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access via port 80 and SSH access via port 22
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: !Ref SSHLocation
+
+  WebServerHost:
+    Type: AWS::EC2::Instance
+    Metadata:
+      Comment: Install a simple PHP application
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            yum:
+              httpd: []
+              php: []
+          groups:
+            apache: {}
+          users:
+            "apache":
+              groups:
+                - "apache"
+          sources:
+            "/home/ec2-user/aws-cli": "https://github.com/aws/aws-cli/tarball/master"
+          files:
+            "/tmp/cwlogs/apacheaccess.conf":
+              content: !Sub |
+                [general]
+                state_file= /var/awslogs/agent-state
+                [/var/log/httpd/access_log]
+                file = /var/log/httpd/access_log
+                log_group_name = ${AWS::StackName}
+                log_stream_name = {instance_id}/apache.log
+                datetime_format = %d/%b/%Y:%H:%M:%S
+              mode: '000400'
+              owner: apache
+              group: apache
+            "/var/www/html/index.php":
+              content: !Sub |
+                <?php
+                echo '<h1>AWS CloudFormation sample PHP application for ${AWS::StackName}</h1>';
+                ?>
+              mode: '000644'
+              owner: apache
+              group: apache
+            "/etc/cfn/cfn-hup.conf":
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+              mode: "000400"
+              owner: "root"
+              group: "root"
+            "/etc/cfn/hooks.d/cfn-auto-reloader.conf":
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.WebServerHost.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource WebServerHost --region ${AWS::Region}
+              mode: "000400"
+              owner: "root"
+              group: "root"
+            # Fetch a webpage from a private S3 bucket
+            "/var/www/html/webpage.html":
+              source: !Sub "https://${MyS3BucketName}.s3.${AWS::Region}.amazonaws.com/webpage.html"
+              mode: '000644'
+              owner: apache
+              group: apache
+              authentication: S3AccessCreds
+          commands:
+            test:
+              command: "echo \"$MAGIC\" > test.txt"
+              env:
+                MAGIC: "I come from the environment!"
+              cwd: "~"
+          services:
+            sysvinit:
+              httpd:
+                enabled: 'true'
+                ensureRunning: 'true'
+              postfix:
+                enabled: 'false'
+                ensureRunning: 'false'
+              cfn-hup:
+                enable: 'true'
+                ensureRunning: 'true'
+                files:
+                  - "/etc/cfn/cfn-hup.conf"
+                  - "/etc/cfn/hooks.d/cfn-auto-reloader.conf"         "focus here too"
+      AWS::CloudFormation::Authentication:
+        # Define S3 access credentials
+        S3AccessCreds:
+          type: S3
+          buckets:
+            - !Sub ${MyS3BucketName}
+          roleName: !Ref InstanceRole
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT15M
+        
+    Properties:
+      ImageId: !Ref ImageId
+      KeyName: !Ref KeyName
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref InstanceProfile # Reference Instance Profile
+      SecurityGroups:
+      - !Ref WebServerSecurityGroup
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            
+            # Get the latest CloudFormation helper scripts
+            yum install -y aws-cfn-bootstrap
+            
+            # Start cfn-init                                     ----------------------> !!!!!!!Focus here!!!!!!!!!!
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource WebServerHost --region ${AWS::Region}
+            
+            # cfn-init completed so signal success or not
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WebServerHost --region ${AWS::Region}
+          
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Principal:
+              Service: ec2.amazonaws.com
+            Effect: Allow
+            Sid: ''
+      Policies:
+        - PolicyName: AuthenticatedS3GetObjects
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 's3:GetObject'
+                Resource: !Sub 'arn:aws:s3:::${MyS3BucketName}/*'
+                Effect: Allow
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref InstanceRole
+
+Outputs:
+  InstanceId:
+    Description: The instance ID of the web server
+    Value:
+      !Ref WebServerHost
+  WebsiteURL:
+    Value:
+      !Sub 'http://${WebServerHost.PublicDnsName}'
+    Description: URL for newly created LAMP stack
+  PublicIP:
+    Description: Public IP address of the web server
+    Value:
+      !GetAtt WebServerHost.PublicIp
+
+
+
+
+1st you write down all you need in AWS::CloudFormation::Init block
+then with cfn-init looks for all the metadata 
+We have also attached creation policy which makes it wait for 15 mins. count by default is 1 if not given.
+
+
+
+
+cfn-hup
+
+Can e used to tell your EC2 instance to look for Metadata changes every 15 minutes and apply the Metadata configuration again.
+
+It is very powerful but you really need to try it out to understand how it works. 
+It relies on a cfn-hup configuration, see /etc/cfn/cfn-hup.conf and /etc/cfn/hooks.d/cfn-auto-reloader.conf
+
+Cloudformation launches ec2 > ec2 instance retrieve init data from config > Signal > cdn-hup checks the metadata every 15 mins > If a change is detected in config in cloudformation > cfn-init runs again.
