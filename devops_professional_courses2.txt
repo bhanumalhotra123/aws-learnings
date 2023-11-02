@@ -170,8 +170,54 @@ Every thing has to happen from cloudformation onky.
 
 
 
+You can use yaml and cf
 
 YAML Course.
+JSON is horrible for CF
+
+Key value pairs
+nested objects
+supported arrays
+multi line string        
+
+address:
+  lines: |
+      458 walkman Dr.
+      suite #292
+  city: pingpong
+
+
+
+Resources are the core of your CF
+224 resouces
+Resource to learn them: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html
+
+
+
+For EC2:
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_EC2.html
+
+EIP:
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-eip.html
+
+
+
+
+Some common questions:
+
+Can I create dynamic amout of resources?
+
+No, you can't. Everything in the CF template has to be declared. You can't perform code genertation there.
+
+Is every AWS Service Supported?
+Almost. Only few select few niches are not there yet.
+You can work around that  using aws lambda custom resources.
+
+
+
+
+       
 
 
 
