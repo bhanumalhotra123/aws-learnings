@@ -153,6 +153,25 @@ Change Set Review
   In events you will see update in  progress.
               
 Doesn't matter whatever order you had given
-            
-         
+
+
+
+What if you terminate your instance?
+Other things such as security groups, elasticIPs still exist.
+
+Instead  select your stack and delete stack so that it deletes everything.
+
+Even the deletion happens in correct sequence
+first eip
+2nd instance, then 
+sg
+
+Every thing has to happen from cloudformation onky.
+
+
+
+
+YAML Course.
+
+
 
