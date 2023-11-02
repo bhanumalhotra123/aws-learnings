@@ -710,3 +710,217 @@ Here you can see the differences between expected and actual
 
 
 
+CloudFormation Stack Policies
+
+During a CloudFormation Stack update, all update actions are allowed on all resources(default)
+
+A stack Policy is a JSON document that defines the update actions that are alowed on specific resources during stack updates.
+
+Protect resources from unintentinal updates.
+
+When you set a stack policy all resources in the Stack are protected by default.
+
+Specify an explicit ALLOW for the resources you want to be allowed to be updated.
+
+
+
+
+
+Nested Stacks
+
+Nested stacks are stacks as part of other stacks.
+They allow you to isolate repeated patterns/ common components in seprate stacks and call them from other stacks 
+
+
+ Example: 
+  Load Balancer configuration that is re-used
+  Security group that is reused.
+
+
+
+To update a nested stack, always update the parent(root stack)
+
+Parameters:
+  SSHKey:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+  
+Resources:
+  myStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/cloudformation-templates-us-east-1/LAMP_Single_Instance.template
+      Parameters:
+        KeyName: !Ref SSHKey
+        DBName: "mydb"
+        DBUser: "user"
+        DBPassword: "pass"
+        DBRootPassword: "passroot"
+        InstanceType: t2.micro
+        SSHLocation: "0.0.0.0/0"
+
+Outputs:
+  StackRef:
+    Value: !Ref myStack
+  OutputFromNestedStack:
+    Value: !GetAtt myStack.Outputs.WebsiteURL
+
+
+Create Stack > Upload file > You will have to give some permissions related to IAM.
+
+
+At the time of deletion you delete the parent stack
+
+ 
+
+
+ChangeSets
+when you update a stackm you need to know what changes before it happens for greater confidence.
+ChangeSets won't say if the update will be successful.
+
+
+Orignal Stack -Create Change Set-> Change Set --View Change Set-> change set --Execute change set-> AWS CloudFormation
+
+
+
+Create a stack: cs-demo
+
+---
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-a4c7edb2
+      InstanceType: t2.micro
+
+
+It will create an EC2 instance for us.
+
+
+Go to change sets 
+
+REPLACE THE CURRENT TEMPLATE WITH NEW
+
+
+---
+Parameters:
+  SecurityGroupDescription:
+    Description: Security Group Description
+    Type: String
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-a4c7edb2
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
+
+  # an elastic IP for our instance
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyInstance
+
+  # our EC2 security group
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  # our second EC2 security group
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SecurityGroupDescription
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 192.168.1.1/32
+
+Upload this one
+
+Then go next, you can check changes in json or like it shows what will be the differnce.
+
+This gives you idea of changes.
+
+Then you can execute or delete.
+
+
+
+Retaining Data on Deletes:
+
+You can put a DeletionPolicy on any resource to control what happens when the CloudFormation template is deleted.
+
+DeletionPolicy=Retain.
+Specify on resources to preserve/backup in case of CloudFormation deletes 
+To keep a resource, specify Retain (works for any resource/nested stack)
+
+DeletionPolicy=Snapshot:
+EBS Volume, ElasticCache Cluster, ElasticCache, ReplicationGroup
+RDS DBInstance, RDS DBCluster, Redshift Cluster
+
+DeletePolicy=Delete(default behaviour):
+Note: for AWS::RDS::DBCluster resources, the default policy is Snapshot
+Note: to delete an S3 bucket, you need to first empty the bucket of its content.
+
+
+take this deletion-sample.yml
+---
+Resources:
+  MySG:
+    Type: AWS::EC2::SecurityGroup
+    DeletionPolicy: Retain             -------------------> Retain
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  MyEBS:
+    Type: AWS::EC2::Volume  
+    DeletionPolicy: Snapshot    --------------->Should go away but make a snapshot of it
+    Properties:
+      AvailabilityZone: us-east-1a
+      Size: 1
+      VolumeType: gp2
+
+
+
+
+
+
+
+Create stack > upload file > once provisioned > Select the stack > Delete stack
+
+Now check Events > You will see Security group status as deletion skipped and for EBS a snapshot created. Once snapshot is created  EBS will be deleted.
+
+
+
+
+
+
+Termination Protection on Stacks:
+
+Create a stack >  Once Created > Actions > Edit Termination Protection > Enable 
+By this way you can't delete the stack without changing it to Disable
+
+
+
+
