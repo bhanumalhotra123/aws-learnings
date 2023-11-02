@@ -382,3 +382,9 @@ You can't delete the underlying stack until all references are delted too.
 
 
 
+
+
+What are conditions used for?
+
+
+
