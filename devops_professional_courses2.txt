@@ -541,7 +541,109 @@ Condition Functions
 
 
 
+______________________________________________
 
+
+
+CloudFormation Rollbacks
+
+Stack Creation Fails:
+  Default: everything rolls back (gets deleted) We can look at the log.
+  Option to disable rollback and troubleshoot what happened.
+
+
+
+Stack Update Fails:
+  The stack automatically rolls back to the previous known working state
+  Ability to see in the log what happened and error messages.
+
+
+
+
+Example:
+
+---
+Parameters:
+  SecurityGroupDescription:
+    Description: Security Group Description
+    Type: String
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: us-east-1a
+      ImageId: ami-123456                    -------------------> This AMI Id doesn't exist
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
+
+  # an elastic IP for our instance
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyInstance
+
+  # our EC2 security group
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  # our second EC2 security group
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SecurityGroupDescription
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 192.168.1.1/32
+
+
+Create a stack > Template is ready > Upload this template file
+
+
+Stack failure options:
+Roll back all stack resources
+Preserve successfully provisioned resources. [select]
+
+
+Next
+
+It generates security groups. So you will have to delete now.
+
+
+
+
+
+Failure on update
+
+Create the stack based on correct template
+Roll back all stack resources [select]
+Preserve successfully provisioned resources.
+
+
+
+Now select the stack > Update Stack > 
+
+Now go with the incorrect file which will cause the failure.
+
+
+This will delete if anything is created and will go back to previous state.
+
+If you pick the other option to preserve it won't delete.
 
 
 
