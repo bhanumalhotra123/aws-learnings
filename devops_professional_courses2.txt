@@ -337,7 +337,7 @@ Resources:
   myEC2Instance:
     Type: "AWS::EC2::Instance"
     Properties:
-    ImageId: !FindMap [RegionMap, !Ref "AWS::Region", 32]
+    ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", 32]
 
 
 
@@ -385,6 +385,163 @@ You can't delete the underlying stack until all references are delted too.
 
 
 What are conditions used for?
+Conditions are used to control the creation of resources or outputs based on a condition.
+
+Conditions can be whatever you want them to be, but common ones are:
+   1.Environment(dev/test/prod)
+   2. AWS Region
+   3. AWS parameter value
+Each condition can reference another condition, parameter value or mapping.
+
+
+How to define a condition?
+
+Condtions:
+  CreateProdResources: !Equals [ !Ref EnvType, prod ]
+
+Fn::Equal
+Fn::And
+Fn::If
+Fn::Not
+Fn::Or
+
+
+How do we use a condition?
+
+Resources:
+  MountPoint:
+    Type: "AWS::EC2::VolumeAttachment"
+    Condition: CreateProdResources         #Here it checks wether the condition is true or not.
+
+
+
+CloudFormation
+Must know Intrinsic Functions:
+
+Ref
+Fn::GetAtt
+Fn::FindInMap
+Fn::ImportValue
+Fn::Join
+Fn::Sub
+Condition Functions(Fn::If, Fn::Not, Fn::Equals, etc ...)
+
+
+
+Fn::Ref function can be leveraged to reference 
+   Parameters  => Returns the value of the parameter
+   Resources   => returns the physical ID of the underlying resource(ex: EC2 ID)
+The shorthand for this in YAML is !Ref
+
+
+
+DbSubnet1:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref MyVPC
+
+
+
+
+Fn::GetAtt
+
+Attributes are attachde to any resources you create
+To know the attributes of your resources, the best place to look at is the documentation.
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
+
+
+Resources:
+  EC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: ami-1234567
+      InstanceType: t2.micro
+
+NewVolume:
+  Type: "AWS::EC2::Volume"
+  Condition: CreateProdResources
+  Properties:
+    Size: 100
+    AvailabilityZone:
+        !GetAtt EC2Instance.AvailabilityZone
+
+
+Fn::FindInMap
+Accessing Mapping Values
+
+AWSTemplateFormatVersion: "2010-09-09"
+Mappings:
+  RegionMaps:
+  us-east-1:
+    "32": "ami-6411e20d"
+    "64": "ami-7a11e213"
+  us-west-1:
+     "32": "ami-c9c7978c"
+     "64": "ami-cfc7978a"
+Resources:
+  myEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+    ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", 32]
+
+
+
+
+Fn::ImportValue
+
+Import values that are exported in other templates
+For this, we use the Fn::ImportValue Function
+
+     Resources:
+      MyInstance:
+      Type: AWS::EC2::Instances
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-a4c7edb 
+        InstanceType: t2.micro
+        SecurityGroups:
+          - !ImportValue SSHSecurityGroup
+
+
+
+
+Fn::Join
+
+!Join [ delimiter, [ comma-delimited list of values]]
+
+This creates "a:b:c"
+
+
+
+
+
+
+
+Fn::Sub
+
+Fn::Sub or !Sub as a shorthand is used to substitue variables from a text. Is is a very handy function that will allow you to fully customize your templates.
+
+
+
+For example you can combine Fn::Sub with References or AWS Pseudo variables!
+
+String must contain ${VariableName} and will substitute them
+
+!Sub 
+  - String
+  - { Var1Name: Var1Value, Var2Name: Var2Value }
+
+!Sub String 
+
+
+
+Condition Functions
+
+
+
+
+
 
 
 
