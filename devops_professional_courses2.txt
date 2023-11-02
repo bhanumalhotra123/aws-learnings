@@ -649,6 +649,64 @@ If you pick the other option to preserve it won't delete.
 
 
 
+CloudFormation Drift
+
+CloudFormation allows you to create infrastructure
+But it doesn't protect you against manual configuration changes
+
+We can use cloudformation drift!
+
+Not all resouces are supported.
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/detect-drift-stack.html
+
+Parameters:
+  VPCId:
+    Description: VPC to create the security group into
+    Type: AWS::EC2::VPC::Id
+  
+Resources:
+  SSHSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Test Drift SSH Security Group
+      SecurityGroupIngress:
+        - CidrIp: "10.0.0.0/25"
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+      VpcId: !Ref VPCId
+
+  HTTPSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Test Drift HTTP Security Group
+      SecurityGroupIngress:
+        - CidrIp: "0.0.0.0/0"
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+      VpcId: !Ref VPCId
+
+
+Create stack > give name and give VpcId as it is stated as parameter in stack.
+
+
+Change anything in securitygroup.
+
+
+
+Cloud formation isn't aware yet.
+
+Go to your stack > Stack Options > Detect Drift 
+
+
+Then under stack Options > View Drift Results
+
+
+Here you can see the differences between expected and actual 
+
+
+
 
 
 
