@@ -1324,3 +1324,159 @@ It is very powerful but you really need to try it out to understand how it works
 It relies on a cfn-hup configuration, see /etc/cfn/cfn-hup.conf and /etc/cfn/hooks.d/cfn-auto-reloader.conf
 
 Cloudformation launches ec2 > ec2 instance retrieve init data from config > Signal > cdn-hup checks the metadata every 15 mins > If a change is detected in config in cloudformation > cfn-init runs again.
+
+
+
+
+
+Upload the file and create the stack
+
+
+
+Certainly, here's the sequence of events when launching an AWS CloudFormation stack with a resource that includes CreationPolicy:
+
+Stack Creation: You initiate the creation of a CloudFormation stack, which includes various AWS resources, such as EC2 instances.
+
+Resource Creation: CloudFormation starts creating the AWS resources specified in your template. In this example, we're focusing on an EC2 instance (the WebServerHost resource).
+
+UserData Execution: When the EC2 instance is launched, the UserData script is executed. This script contains initialization steps, including the installation of software and configuration of services.
+
+cfn-init: While not explicitly shown in the provided snippet, it is implied that within the # Initialization steps... part of the UserData script, the cfn-init command is executed. This command processes the AWS::CloudFormation::Init metadata section and performs initialization tasks such as package installation, user and group creation, and service setup.
+
+Initialization and Configuration: cfn-init performs the tasks specified in the AWS::CloudFormation::Init section, ensuring that the instance is initialized and configured according to your template.
+
+Signal with cfn-signal: After the initialization tasks are complete, the UserData script runs the cfn-signal command. This command sends a signal to CloudFormation to indicate whether the resource was successfully initialized.
+
+CreationPolicy Timeout: At this point, CloudFormation begins to wait for the resource's signal. The CreationPolicy is set to define a timeout period (e.g., 15 minutes) during which CloudFormation will wait for the success signal.
+
+Resource Signals Success or Failure: If the EC2 instance successfully completes its initialization and sends the expected success signal within the specified timeout, CloudFormation considers the resource creation as successful. The stack creation continues, and any dependent resources can be created.
+
+Stack Completion: Once the resource signals success, the stack creation proceeds, and any outputs, updates, or other resources that depend on the successfully initialized resource are processed.
+
+Timeout Handling: If the resource doesn't signal success within the defined timeout, CloudFormation considers the resource creation as a failure, and it can take appropriate actions, such as rolling back the stack to its previous state or performing other error-handling procedures defined in the CloudFormation stack.
+
+This sequence of events ensures that CloudFormation waits for an AWS resource, like an EC2 instance, to be fully initialized and configured before proceeding with the creation of dependent resources or further stack operations. The use of CreationPolicy in this process helps maintain reliability and consistency in your infrastructure provisioning.
+
+
+
+
+
+
+Continue Rolling Back an Update
+
+A stack goes into the UPDATE_ROLLBACK_FAILED state when CloudFormation can't roll back changes during an update.
+
+A resource can't return to its orignal state, causing the rollback to fail
+
+Example: roll back to an old database instance that was deleted outside CloudFormation.
+
+
+Solutions: Fix the errors manually outside  of CloudFormation and then continue update rollback the stack
+           Skip the resources that can't rollback successfully (CloudFormation will mark the failed resources as 
+           update_complete)
+
+You can't update a stack in this state.
+
+For nested stacks, rolling back the parent stack will attempt to roll back all the child stacks as well.
+
+
+
+
+
+Parameters:
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AvailabilityZones: 
+        - !Select 
+          - 0
+          - Fn::GetAZs: !Ref 'AWS::Region'
+      DesiredCapacity: "1"
+      LaunchConfigurationName: !Ref LC
+      MaxSize: "1"
+      MinSize: "1"
+  LC:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties: 
+      ImageId: !Ref ImageId
+      InstanceType: t2.micro
+
+Creating the stack
+We are creating ASG and launch configuration
+
+
+Let us go to launch configuration >
+Select things manualy: Name,AMI,InstanceType, select keypair
+
+Go to AutoScaling group
+and chosse NewLC  and update ASG with it and delete the one which was created by CF.
+
+
+
+now let us have another stack file, ASG is kept same. What we are changing is LC. Instance type is t2.nano now.
+We also have WaitCondition, but this wait condition will never receive a signal. As  nothing in in the script will create a signal.
+Wait Condition will have an error and go to rollback 
+
+
+
+Parameters:
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AvailabilityZones: 
+        - !Select 
+          - 0
+          - Fn::GetAZs: !Ref 'AWS::Region'
+      DesiredCapacity: "1"
+      LaunchConfigurationName: !Ref LC
+      MaxSize: "1"
+      MinSize: "1"
+
+  LC:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties: 
+      ImageId: !Ref ImageId
+      InstanceType: t2.nano
+
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    DependsOn: ASG
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT1M
+
+
+
+
+When you update the stack with this, it will fail but now we don't have old LC.
+
+The stack creates the newer LC but the wait condition won't be satisfied as we are not sending any signal to our cloudformation.
+
+It will fail and roll backs
+But even the rollback fails as old LC doesn't exist
+
+We go to settings and go to Continue update rollback
+
+There is option to skip
+
+But we don't want that to happen.
+
+We go and create a launch config with old name and everything same.
+
+We again go to the option of Continue update rollback and make it try again.
+
+It should work now.
+
+
+
