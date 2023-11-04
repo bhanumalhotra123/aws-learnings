@@ -102,6 +102,12 @@ make weight of version2 100%
 
 
 
+
+
+
+
+
+
 Lambda Environment Variables:
 
 Environment variable = key/value pair in "String" form
@@ -151,3 +157,128 @@ Again go to environment variables change the value of ENVIRONMENT_NAME to prod a
 
 >Test
 response will be 
+
+
+
+
+
+
+
+
+
+
+Lambda Concurrency and Throttling:
+
+Concurrency limit: up to 1000 concurrent executions
+
+Can set a "reserved concurrency" at the function level (=limit)
+Each invocation over the concurrency limit will trigger a "Throttle"
+Throttle behaviour:
+  If synchronous invocation => return ThrottleError -429
+  If asynchronous invocation => retry automatically and then go to DLQ
+If you need a higher limit, open a support ticket
+
+Lambda Concurrency Issue
+
+If you don't reserve(=limit) concurrency, the following can happen:
+
+users ---> ALB ---> Lambda fn ----> assume it goes upto 1000 concurrent executions
+
+Few users ---> API Gateway ---> Lambda fn     THROTTLE!
+
+SDK/CLI ---> Lambda fn     THROTTLE!
+
+
+
+
+Concurrency and Asynchronous Invocations
+            ----New file event----> Lambda invoked
+S3 bucket   ----New file event----> Lambda invoked
+            ----New file event----> Lambda invoked
+
+
+If the function doesn't have enough concurrency available to process all events, additional requests are throttled.
+
+For throttling errors(429) and system errors(500-series), Lambda returns the event to the queue and attempts to run the function again for upto 6 hours.
+
+The retry interval increases exponentially from 1 second after first attempt to a maximum of 5 minutes.
+
+
+
+
+
+Cold Starts and Provisioned Concurrency.
+
+Cold Start: 
+   New instance => code is loaded and code outside the handler run (init)
+   If the init is large (code, dependencies, SDK..) this process can take some time.
+   First request served by the new instances has higher latency than the rest
+
+Provisioned Concurrency:
+  Concurrency is allocated before the function is invoked(in advance)
+  So the cold start never happens and all invocations have low latency
+  Application Auto Scaling can manage concurrency (schedule or target utilization)
+
+Note: 
+  Note: cold starts in VPC have been dramatically reduced in Oct & Nov 2019
+
+
+
+>Concurrency tab
+By default it will show Unreserved account concurrency of 1000 
+
+Unreserved account concurrency is now lower
+AWS raises quotas automatically based on usage, or you can request a quota increase.
+
+This default value is shared by all the lambda functions in your account.
+
+>Edit
+
+Reserve concurrency = 20
+> save
+
+now you will have 20 for this function and 980 left for others.
+
+
+To test concurrecny set Reserve concurrency = 0
+As this will make the lambda function always throttle
+
+
+Go to >Test tab hit >Test
+
+Calling the invoke API action failed with this message: Rate Exceeded.
+
+Now change the Reserve concurrency to some bigger value than 0 OR change it to unreserved concurrency.
+
+Test again, it will succeed
+
+
+We can also provisioned concurrency to remove these cold starts.
+
+>Add
+
+Qualifier type: 
+Alias or Version
+
+we can't select latest version here. We want a published version.
+
+
+
+
+
+Lambda - File Systems Mounting
+
+Lambda functions can access EFS file systems if they are running in a VPC
+
+Configure Lambda to mount EFS file systems to local directory during initialization.
+
+Must leverage EFS Access Points
+
+Limitation: watch out for the EFS connection limits (one function instance = one connection) and connection burst limits
+
+storage options for Lambda
+                           max                                Persistence   Content    storageType      sharingPerm     relative data access speed from lambda
+Ephermal storage /tmp     10gb                                 Ephermal       dynamic    file system        func only       fastest                            any file system operation
+Lambda layers              5layers per fn[total=250mb]         Durable        static     archive            IAM             fastest                             immutable
+amazon s3                 Elastic                              Durable        dynamic     object            IAM              fast                              atomic with versioning
+amazon efs                Elastic                              Durable        dynamic     file sytem        IAM              very fast                          any file system operation
