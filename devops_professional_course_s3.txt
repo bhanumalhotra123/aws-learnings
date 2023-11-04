@@ -1,0 +1,103 @@
+AWS Lambda Versions
+
+When you work on a Lambda function we work on $LATEST
+When we are happy with our code state we can publish it can create a new version.
+now the version you create say V1 is immutable.
+then next version V2 will also be immutable
+
+Versions get their own ARN(Amazon Resource Name)
+Version = code + configuration(nothing can be changed)
+Each version of the lambda can be accessed
+
+
+Lambda Aliases
+
+Pointers to Lambda function versions
+We can defina a dev, test, prod aliases and have them point at different lambda versions
+Aliases are mutable
+
+Aliases enable canary deployment by assigning weights to lambda functions.
+Aliases enable stable configuration of our event triggers/ destinations.
+
+Aliases have their own ARNs
+Aliases can't refer to other aliases.
+
+
+
+Go to Lambda > Create function >  Author from scratch > Function Name > Runtime > Create Function
+
+
+import json
+
+def lambda_handler(event, context):
+    return "this is version1"
+
+>Deploy it 
+
+Then >Test
+Create new test event
+Event template
+Event name
+>Create
+
+Then >Test
+
+Say we are very happy with this code and we want name it version1
+>Action >Publish new version from $LATEST
+
+>Publish
+
+This has created version1  [Now we can't change the code in it]
+Test the function
+
+Now say we want to keep on editing our version
+
+Go back to our main function
+
+import json
+
+def lambda_handler(event, context):
+    return "this is version2"
+
+>Deploy 
+>Test
+
+>Actions > Publish new version from $LATEST
+>Publish
+
+
+Now we need to play with aliases
+
+Under Versions Tab we can see all the versions we created
+
+Now go to alias tab 
+>Create Alias 
+Name: dev
+Version: $LATEST
+
+>Create Alias
+Name: Test
+Version: 2
+
+>Create Alias
+Name: Prod
+Version: 1
+
+
+With aliases we can start doing some weights
+
+Aliases Tab
+Select prod >Edit
+>weighted alias >Additional version: 2 Weight: 50
+>Save
+
+Now >Test
+
+in results it will show version1 and version2 50% of times each
+
+
+Once you see version2 is working great 
+make weight of version2 100%
+
+
+
