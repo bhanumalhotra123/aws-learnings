@@ -101,3 +101,53 @@ make weight of version2 100%
 
 
 
+
+Lambda Environment Variables:
+
+Environment variable = key/value pair in "String" form
+Adjust the function behaviour without updating code
+The environment variables are available to your code
+Lambda service adds its own system variables as well
+
+
+Helpful to store secrets(encrypted by KMS)
+Secrets can be encrypted by the Lambda Service key, or your own CMK.
+
+Create a function > Author from Scratch
+
+
+import json
+import os
+
+def lambda_handler(event, context):
+    return os.getenv("ENVIRONMENT_NAME")
+
+
+>Deploy to save the changes
+
+Select this lambda function go to configuration tab
+on left hand side > Environment variables
+
+Key
+ENVIRONMENT_NAME
+
+Value
+dev
+
+There is encryption configuration which we can have but we will do this in security section of course
+right now this env variable is unencrypted
+
+>Save
+
+>Test 
+Event name = sample event
+Create
+
+>Test
+In response you should get dev
+
+
+Again go to environment variables change the value of ENVIRONMENT_NAME to prod and save the function
+
+>Test
+response will be 
