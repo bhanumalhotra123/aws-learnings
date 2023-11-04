@@ -282,3 +282,423 @@ Ephermal storage /tmp     10gb                                 Ephermal       dy
 Lambda layers              5layers per fn[total=250mb]         Durable        static     archive            IAM             fastest                             immutable
 amazon s3                 Elastic                              Durable        dynamic     object            IAM              fast                              atomic with versioning
 amazon efs                Elastic                              Durable        dynamic     file sytem        IAM              very fast                          any file system operation
+
+
+
+
+Lambda - Cross-account efs mounting
+
+Account A                          Account B
+VPC A                              VPC B
+Lambda Function                    EFS File System + Access Point
+
+
+1st we have to setup VPC peering
+
+
+Account A needs:
+
+Lambda Permissions elasticfilesystem:DescribeFileSystems
+                   elasticfilesystem:DescribeMountTargets
+                   elasticfilesystem:CreateAccessPoint
+                   ec2: DescribeSubnets
+                   ec2: DescribeNetworkInterfaces
+
+
+
+
+AccountB needs:
+EFS File System Policy:
+
+{
+"Statement":[
+    {
+      "Effect": "Allow",
+      "Action": [
+            "elasticfilesystem:ClientMount"
+            "elasticfilesystem:ClientWrite"
+      ],
+      "Principal": {
+           "AWS": "arn:aws:iam::111122223333:root"     ----> accountA
+      }
+
+
+
+    }
+  ]
+}
+
+
+
+
+
+Client --IAM-> Lambda ---CRUD--->DynamoDB 
+
+Client --ALB---> Lambda ---CRUD--->DynamoDB 
+
+
+
+API Gateway: Provides us alot of features
+ 
+Client --REST API--> API Gateway   ------Proxy Request----> Lambda ---CRUD--->DynamoDB 
+
+
+
+AWS API Gateway
+AWS Lambda + API Gateway: No Infra to manage
+Support for WebSocket Protocol
+Handle API versioning(v1, v2...)
+Handle security (Authentication and Authorization)
+Create API keys, handle request throttling
+Transform and validate requests and responses
+Cache API responses.
+
+ 
+
+API Gateway Integrations level
+
+Lambda function
+  Invoke Lambda function
+  Easy way to expose REST API backed by AWS Lambda
+HTTP  
+  expose HTTP endpoints in the backend 
+  example: internal HTTP API on premise , Application Load Balancer
+  WHY? Add rate limiting, caching, user authentication, API keys, etc..
+AWS Service:
+  Expose any AWS API through the API Gateway?
+  Example: start an AWS Step Function workflow, post a message to SQS
+  Why? Add authentication, deploy publicaly, rate control.
+
+ 
+
+API Gateway - AWS service Integration
+
+Kinesis Data Streams example:
+
+Client ---request-->     API Gateway    --send--> Kinesis Data streams---records---> Kinesis Data Firehose  --store .json files--> Amazon S3
+
+
+
+3 ways to expose API gateway
+
+Endpoint Types:
+Edge-Optimized(default): For global clients
+  Requests are routed through the CloudFront Edge locations (improve latency)
+  The API Gateway still lives in only one region
+Regional:
+  For clients within the same region
+  Cloud manually combine with CloudFront(more control over the caching strategies and the distribution)
+Private:
+  Can only be accessed from your VPC using an interface VPC endpoint(ENI)
+  Use a resource policy to define access
+
+
+AWS Gateway- Security
+
+User Authentication through
+   IAM Roles(useful for internal applications)
+   Cognito (identity for external users - example mobile )
+   Custom Authorizer(your own logic)
+
+
+Custom Domain Name HTTPS security through integration with AWS Certificate Manager(ACM)
+  If using Edge-Optimized endpoint, then the certificate must be in us-east-1
+  If you are using Regional  endpoint, the certificate must be in the API Gateway region.
+  Must setup CNAME or A-alias record in Route53
+
+
+Hands-ON!
+
+
+Choose an API type
+
+HTTP API
+WebSocket API
+REST API -----------------------> Build  this for now
+REST API Private
+
+
+
+New API  
+Clone existing API   
+Import API   
+Example API
+
+
+API Name
+
+API Endpoint type
+Regional, edge-optimized, private      Picking Regional for now.
+
+
+>Create API
+
+>Create Method 
+DELETE,GET,OPTIONS,HEAD,PATCH,POST,PUT   Select GET for now
+
+> IntegrationType
+Lambda Function     ---------> Select this for now       
+HTTP
+Mock
+AWS service
+VPC link
+
+But first we need to creat a lambda function
+ Author from scratch  ---> Function name = api-gateway-root-get
+ Python 3.11 
+ Create Function
+
+
+
+import json
+
+def lambda_handler(event, context):
+    body = "Hello from Lambda!"
+    statusCode = 200
+    return {
+        "statusCode": statusCode,
+        "body": json.dumps(body),
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+  
+
+
+Deploy
+
+Create a Test Event
+
+>Test  
+
+Now we are going to integrate lambda with api-gateway.
+
+Copt the function ARN
+
+
+Now go to api-gateway. Once you have selected Lambda function as integrationType
+enter the ARN of function
+
+Default timeout is 29sec  [API gateway has limited timeout] doesn't matter how long your lambda functions take to execute.
+You can enter custom timeout but it 
+
+
+>Create Method
+
+This will automaticaly grant API gateway the right to execute lambda function
+
+
+Refresh lambda function page
+
+It will show that now API gateway is added to lambda function as a trigger.
+ 
+
+Go to permissions in configuration tab
+
+Go to Resource-based policy statements
+
+Select the statement id and view policy
+
+this will show that your api gateway have permission to invoke the lambda function.
+
+
+
+You can go to test tab in aws-api-gateway and test it 
+
+
+
+import json
+
+def lambda_handler(event, context):
+    print(event)
+    body = "Hello from Lambda!"
+    statusCode = 200
+    return {
+        "statusCode": statusCode,
+        "body": json.dumps(body),
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+
+Now with the printing of event will help you catch cloudwatch logs to see what api-gateway is passing on to lambda functions.
+
+>Test again 
+
+and now go to cloudwatch logs and you will find that api-gateway sends a lot of info back to lambda function.
+
+
+Create another resource in api-gateway
+/houses
+select get method
+integratelambda function
+
+copy the same code as before just changing the body = hello from houses
+click on tests >test
+
+we want this to be tested also from web-browser
+
+>Deploy API
+
+Once deployed you get the invoke url
+
+you can paste it in your browser
+ and if you go to /houses you get the expected respose.
+
+
+
+
+
+
+
+API Gateway - Deployment Stages
+
+Making changes in API Gateway does not mean they're effective.
+You need to make a "deployment" for them to be in effect.
+It is a common source of confusion.
+
+Changes are deployed to "Stages" (as many as you want)
+Use the naming you like for stages (dev, test, prod)
+Each stage has its own configuration parameters
+Stages can be rolled back as a history of deployments is kept.
+
+
+V1 Client ---https://api.example.com/v1----> API Gateway---v1----> Lambda v1
+
+V2 Client----https://api.example.com/v2----> API Gateway---v2----> Lambda v2
+
+
+Once your entire client base moves to the new url we can shutdown v1 stage
+
+
+
+
+Stage variables are like environment variables for API Gateway
+Use them to change often changing configurations values
+They can be used in:
+    Lambda function ARN
+    HTTP Endpoint
+    Parameter mapping templates
+
+Use cases:
+   - Configure HTTP endpoints your stages talk to (dev, test, prod...)
+   - Pass configuration parameters to AWS Lambda through mapping templates
+
+Stage variables are passed to the "context" object in AWS Lambda 
+
+Format: ${stageVariables.variableName}
+
+
+
+API Gateway Stage Variables & Lambda Aliases
+
+We create a stage variable to indicate the corresponding Lambda alias
+
+Our API gateway will automatically invoke the right Lambda function
+
+API Gateway(Dev Stage) ----> Dev Alias ----> $Latest lambda function
+API Gateway(Test Stage)----> Test Alias----> v2 lambda function
+API Gateway(Prod Stage)----> Prod Alias----> v1 lambda function(95%) and v2 lambda function(5%)
+
+
+
+Hands on!
+API gateway
+Create a resource
+> give name as stage-variables
+
+Create a lambda function for version1 >test it >actions> publish it with name v1
+
+again publish another lambda function version2 by changing the main function $LATEST with name v2
+
+now deploy the $LATEST as hello from dev, no need to publish it as it is dev
+
+
+
+Now go to alias tab of your lambda function 
+NAME DEV
+VERSION $LATEST
+
+NAME TEST
+VERSION 2
+
+NAME PROD 
+VERSION 1 95%
+VERSION 2 5%
+
+
+
+API Gateway 
+> Create method 
+
+MethodType GET
+IntegrationType  Lambda fn
+
+Lambda Function
+eu-west-1        ARN:$(stageVariables.lambdaAlias)
+
+Copy the permissions that you are prompted it
+
+open cloud shell 
+run that
+probably ARN is copied twice correct it
+
+remove ${stageVariables.lambdaAlias}   add DEV in place of it
+
+run it on cloud shell
+
+
+again change it to TEST and again run
+
+last change it to PROD and again run
+
+
+
+Now  > Create method
+
+Go to lambda function > Alias > PROD > Resource-based-Policy [you can check the policy it states api gateway can invoke it]
+
+
+
+Now in API  Gateway 
+
+> Test
+
+You will find option to set lambdaAlias
+Try for TEST once
+
+you will get hello from lambda v2
+
+
+
+
+Deploy API 
+Stage: Dev
+
+Once done
+
+Go down you can set stage variables, add lambdaAlias DEV
+
+
+Deploy API again
+Stage name: test
+
+in test stage add stage variables, lambdaAlias TEST
+
+same for prod
+
+
+you can test by going to different urls
+
+ 
+Create API Gateway resources and Lambda functions (v1 and v2).
+Publish Lambda functions with aliases (Dev, Test, Prod).
+Use AWS CloudShell or AWS CLI to dynamically set stage variables for each deployment stage, like this:
+For Dev: Set lambdaAlias to 'DEV'
+For Test: Set lambdaAlias to 'TEST'
+For Prod: Set lambdaAlias to 'PROD'
+Test with different Lambda aliases (Dev, Test, Prod).
+Configure Resource-Based Policies in Lambda for API Gateway.
+Deploy your API with stage variables (Dev, Test, Prod).
+Set stage variables like lambdaAlias DEV for dev stage
+and lambdaAlias PROD for prod stage
