@@ -1035,3 +1035,30 @@ Import from S3
   Doesn't consume any write capacity
   Creates a New table 
   Import errors are logged in CloudWatch logs
+
+
+
+
+
+
+DMS - Database Migration Service
+
+quickly and securely migrate databases to AWS, resilient, self healing
+The source databases remains available during the migration
+
+supports: 
+  Homogeneous migrations: ex Oracle to Oracle
+  Heterogeneous migrations: ex Microsoft SQL
+
+Continuous Data Replication using CDC
+You must create an EC2 instance to perform the replication tasks
+
+
+
+SOURCE DB --------> EC2 running DMS software ----> Target Database
+
+AWS Schema Conversion Tool
+Convert your Database's Schema from one engine to another
+
+
+Multi AZ Deployment
