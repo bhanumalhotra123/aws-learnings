@@ -900,3 +900,14 @@ Select one method say GET
 say change the TTL and other rules
 
 
+API Gateway - Canary Deployment
+
+Possibility to enable canary deployments for any stage (usually prod)
+Choose the % of traffic the canary channel receives
+
+Prod Stage -------------> Lambda v1
+Prod stage canary ---------> Lambda v2
+
+Metrics& Logs are seperate(for better monitoring)
+Possibility to override stage variables for canary
+this is blue/green deployment with AWS Lambda & API Gateway
