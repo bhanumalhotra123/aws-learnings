@@ -1061,4 +1061,433 @@ AWS Schema Conversion Tool
 Convert your Database's Schema from one engine to another
 
 
-Multi AZ Deployment
+
+
+
+
+
+Disaster Recovery
+On-premise --> On-premise:traditional DR, and very expensive
+On-premise --> AWS Cloud:hybrid recovery
+AWS Cloud Region A --> AWS Cloud Region B
+
+Recovery Point Objective    How much of data loss are you willing to be fine with
+Recovery Time Objective     Downtime
+
+Smaller these two things will be: Higher the cost
+
+Backup and Restore(High RPO)
+Pilot Light
+Warm Standby
+Hot Site/Multi Site Approach
+
+
+
+
+
+Backup and Restore(High RPO)   Cheaper
+
+CASE 1
+Corporate data centre                  AWS Cloud
+ 
+Data   Data   Data   -------AWS Storage Gateway---------> Amazon S3   ---\ 
+                                                                          )
+   Data              ------AWS Snowball----------------> Glacier-------<-/
+
+
+
+
+CASE 2
+
+AWS Cloud                                AWS Cloud
+
+EBS            Scheduled regular snapshots and backup   RPO24hrs 
+Redshift                                                            
+RDS
+
+
+
+
+Disaster Recover - Pilot Light
+A small version of the app is always running in the cloud
+Useful for the critical core (pilot light)
+
+
+                |-----------Route 53 Failover------------------> AWS Cloud
+Corporate  data base                                               EC2(not running)
+                      -----------Data replication------------------> RDS(running)
+
+
+
+
+
+
+Warm Standby
+Full system is up and running, but at minimum size
+Upon disaster, we can scale to production load
+
+
+
+             |------------------Route53---------------------->AWS Cloud ----|
+Corporate data center                                                      ELB
+
+Reverse Proxy                                                                EC2 Autoscaling(minimum)
+
+App Server              
+
+Master DB -------------------------Data Replication---------------------->  RDS Slave(running)
+
+
+
+
+Multi-Site / Hot Site Approach
+
+
+             |------------------Route53---------------------->AWS Cloud ----|
+Corporate data center                                                      ELB
+
+Reverse Proxy                                                                EC2 Autoscaling
+                                                                               Production    
+App Server              
+
+Master DB -------------------------Data Replication---------------------->  RDS Slave(running)
+
+
+
+
+  AWS Cloud                                                              AWS Cloud
+    / ----------------------------------- Route 53--------------------------\
+ELB                                                                         ELB
+
+EC2 Auto Scaling                                                          EC2 Auto Scaling
+(production)                                                              (production)
+
+Aurora Global (master) ---------------------Data Replication ------------> Aurora Global (slave)
+
+
+
+
+Disaster Recovery Tips
+
+Backup
+ - EBS Snapshots, RDS automated backups / Snapshots, etc
+   Regular pushes to S3/S3 IA / Glacier, Lifecycle Policy, Cross Region Replication
+   From On-Premise: Snowball or Storage Gateway
+High Availability
+   Use Route53 to migrate DNS over from Region to Region
+   RDS Multi-AZ, Elastic Cache, Multi-AZ, EFS, S3
+Replication
+   RDS Replication(Cross Region) AWS Aurora + Global Databases
+   Storage Gateway
+Automation
+  CloudFormation / Elastic Beanstalk to re-create a whole new environment.
+  Recover/ Reboot EC2 instances with CloudWatch if alarms fail
+  AWS Lambda functions for customized automations
+Choas 
+  Netflix has a 'simian-army' randomly terminating EC2 
+
+
+
+
+
+
+Amazon CloudWatch Metrics
+
+- CloudWatch provides metrics for every service in AWS
+- Metric is a variable to monitor (CPU Utilization, Networking)
+- Metrics belong to namespaces
+- Dimensions is an attribute of a metric (instance id, environment, etc..)
+- Upto to 30 dimensions per metric
+- Metrics have timestamps.
+- Can create CloudWatch dashboards of metrics(for the RAM for example)
+
+
+CloudWatch Metric Streams
+Continually stream CloudWatch metrics to a destination of your choic, with near-real-time delivery and low latency.
+- Amazon Kinesis Data Firehost(and then its destinations)
+- 3rd party service provider: Datalog, Dynatrace, New Relic, Splunk, Sumo Logic...
+
+                                                                     --> Amazon Redshift
+CloudWatch Metrics ---Stream near real-time ---> Kinesis Data Firhose--> Amazon S3---> Athena
+                                                                     --> Amazon OpenSearch
+
+
+
+Option to filter metrics to only stream a subset of them.
+
+Detailed monitoring gives data for every 1 minute.
+
+
+
+CloudWatch Custom Metrics
+
+Possibility to define and send your own custom metrics to CloudWatch
+Example: memory (RAM) usage, disk space, number of logged in users
+Use API call PutMetricData
+Ability to use dimensions (attributes) to segment metrics 
+  - Instance.id
+  - Environment.name
+Metric Resolution (StorageResolution API parameter - two possible value):
+- Standard: 1 minute
+- High Resolution: 1/5/10/30 seconds - Higher cost
+
+Important: Accepts metric data points two weeks in the past and two hours in the future (make sure to configure your EC2 instance time correctly)
+
+
+https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/put-metric-data.html
+
+
+
+To publish a custom metric to Amazon CloudWatch
+
+The following example uses the put-metric-data command to publish a custom metric to Amazon CloudWatch:
+
+aws cloudwatch put-metric-data --namespace "Usage Metrics" --metric-data file://metric.json
+The values for the metric itself are stored in the JSON file, metric.json.
+
+Here are the contents of that file:
+
+[
+  {
+    "MetricName": "New Posts",
+    "Timestamp": "Wednesday, June 12, 2013 8:28:20 PM",
+    "Value": 0.50,
+    "Unit": "Count"
+  }
+]
+For more information, see Publishing Custom Metrics in the Amazon CloudWatch Developer Guide.
+
+To specify multiple dimensions
+
+The following example illustrates how to specify multiple dimensions. Each dimension is specified as a Name=Value pair. Multiple dimensions are separated by a comma.:
+
+aws cloudwatch put-metric-data --metric-name Buffers --namespace MyNameSpace --unit Bytes --value 231434333 --dimensions InstanceID=1-23456789,InstanceType=m1.small
+
+
+  put-metric-data
+--namespace <value>
+[--metric-data <value>]
+[--metric-name <value>]
+[--timestamp <value>]
+[--unit <value>]
+[--value <value>]
+[--dimensions <value>]
+[--statistic-values <value>]
+[--storage-resolution <value>]
+[--cli-input-json <value>]
+[--generate-cli-skeleton <value>]
+[--debug]
+[--endpoint-url <value>]
+[--no-verify-ssl]
+[--no-paginate]
+[--output <value>]
+[--query <value>]
+[--profile <value>]
+[--region <value>]
+[--version <value>]
+[--color <value>]
+[--no-sign-request]
+[--ca-bundle <value>]
+[--cli-read-timeout <value>]
+[--cli-connect-timeout <value>]
+
+
+
+CloudWatch Anomaly Detection
+Continuously analyze metrics to determine normal baselines and surface anomalies using ML algorithms.
+It creates a model of the metric's expected values(bases on metric's past data)
+
+It creates a model of the metric's expected values(based on metric's past data)
+Shows you which values in the graph are out of the normal range
+Allows you to create Alarms based on metric's expected value(instead of Static Threshold)
+Ability to exclude specified time periods or events from being trained.
+
+
+Amazon Lookout for Metrics
+Automatically detect anomalies within metrics and identify their root causes using Machine Learning
+It detects and diagnoses errors within your data with no manual intervention.
+Integrates with different AWS Services and 3rd party SaaS apps throguh AppFlow
+Send alerts to SNS, Lambda, Slack, Webhook
+
+
+S3
+Redshift
+CloudWatch   --AppFlow->  ---------Amazon Lookout for metrics ---------> SNS, Lambda, Slack, Webhook
+RDS
+
+
+
+CloudWatch Logs
+Log Groups: arbitrary name, usually representing an application
+Log Stream: instances within application/log files/ containers
+Can define log expiration policies (never expire, 1 day to 10 years)
+
+CloudWatch Logs can send logs to:
+
+Amazon S3 (exports)
+Kinesis Data Streams
+Kinesis Data Firehose
+AWS Lambda
+Opensearch
+
+Logs are encrypted by default
+Can setup KMS-based encryption with your own keys
+
+
+CloudWatch Logs - Sources
+
+SDK, CloudWatch Logs Agent, CloudWatch Unified Agent
+Elastic beanstalk: collection of logs from application
+ECS: collection from containers
+AWS Lambda: collection from function logs
+VPC Flow Logs: VPC specific logs
+API Gateway
+CloudTrail based on filter
+Route53: Log DNS queries
+
+
+How to query CloudWatch Logs?
+CloudWatch Log Insights
+
+Search and analyze log data stored in CloudWatch Logs
+
+Example: Find a specific IP inside a log, count occurrecnces of "ERROR" in your logs...
+
+Provides a purpose-built query language
+ - Automatically discovers fields from AWS services and JSON log events
+ - Fetch desired event fields, filter based on conditions, calculate aggregate statistics, sort events, limit number of events
+ - Can save queries and add them to CloudWatch Dashboards
+
+Can query multiple Log Groups in different AWS accounts
+
+It is a query engine, not a real-time engine.
+
+
+CloudWatch Logs - S3 Export
+Log data can take up to 12 hours to become available for export 
+The API call is CreateExportTask
+
+Not near-realtime    ...use Logs Subscriptions instead for real time
+
+
+
+CloudWatch Logs Subscriptions
+Get a real-time log events from CloudWatch Logs for processing and analysis
+Send to Kinesis Data Streams, Kinesis Data Firehose, or Lambda
+
+Subscription Filter - filter which logs are events delivered to your destination
+
+
+                                          |--------Lambda    
+CloudWatch Logs ---logs-->subscription filter-------Kinesis Data Firehose-----near realtime---> S3
+                                          |--------Kinesis Data Streams
+
+
+In the AWS Management Console, navigate to CloudWatch.
+Select "Log groups" on the left sidebar.
+Click on the Log Group that contains your log data.
+Click the "Create Export Task" button.
+Configure the export task:
+Destination: Choose "S3 bucket" and select the S3 bucket you created.
+IAM role: Choose the IAM role you created in step 3.
+Prefix: Specify a prefix (optional) to organize log data within the S3 bucket.
+Execution role: You can create a new role or use an existing one.
+Click "Next" and review your configuration.
+Click "Create Export Task."
+Verification:
+
+You can verify the log data export by checking the S3 bucket. Log data will be stored in the S3 bucket in a structure that matches your configuration.
+
+
+
+ACCOUNT A-----------> Subscription Filter \
+REGION 1
+
+ACCOUNT B-----------> Subscription Filter ------> Kinesis Data Steams-----> Kinesis Data Firehose ---Near Realtime----> S3 bucket
+REGION 2
+
+ACCOUNT B-----------> Subscription Filter /
+REGION 3
+
+
+
+CloudWatch Logs Subscriptions
+
+Cross Account Subscription - send log events to resources in a different AWS account (KDS, KDF)
+
+
+Account (sender)                                                       Account Reciptent
+CloudWatch Logs----logs----> Subscription Filter-----logs-------------> Subscription Destination--> Kinesis Data Streams(ReciptentStream)
+
+
+
+Destination Access Policy in sender account
+
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::11111:root"
+      },
+      "Action": "logs:PutSubscriptionFilter",
+      "Resource": "arn:aws:logs:<region>:<destination-account-id>:destination/<destination-name>"
+    }
+  ]
+}
+
+
+IAM role in reciptent account to send data to KDS
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "kinesis:PutRecord",
+                "kinesis:PutRecords"
+            ],
+            "Resource": "arn:aws:kinesis:<region>:2222:stream/<kinesis-stream-name>"
+        }
+    ]
+}
+
+
+HANDS ON!
+
+Log group
+/aws/glue/crawlers
+/aws/datasync
+aws/lambda/CdkAppStack-BucketNotificationsHandler...
+
+Log streams
+different for instances
+
+
+Metric filters > Creat Metric Filter
+
+Filter Pattern: Give any value
+
+Select log data to test: 
+
+>Test Pattern
+
+Next
+
+>Filter Name
+>Metric Namespace:
+>Metric Name:
+>Metric Value: 1
+>Unit
+
+Create
+
+
+Now go to all metrics
+> All namespaces
+> We can create alarms on the metric we created
+
